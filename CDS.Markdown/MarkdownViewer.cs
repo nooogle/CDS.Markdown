@@ -5,47 +5,37 @@ using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Web.WebView2.Core;
 using Markdig;
 
-namespace CDS.Markdown
+namespace CDS.Markdown;
+
+public partial class MarkdownViewer : UserControl
 {
-    public partial class MarkdownViewer : UserControl
+    private string? currentDirectory;
+
+    public MarkdownViewer()
     {
-        private WebView2 webView;
-        private string? currentDirectory;
+        InitializeComponent();
+    }
 
-        public MarkdownViewer()
-        {
-            InitializeComponent();
-            InitializeWebView();
-        }
 
-        private void InitializeWebView()
-        {
-            webView = new WebView2
-            {
-                Dock = DockStyle.Fill
-            };
-            Controls.Add(webView);
-        }
+    public async void LoadMarkdown(string filePath)
+    {
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException("Markdown file not found", filePath);
 
-        public async void LoadMarkdown(string filePath)
-        {
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException("Markdown file not found", filePath);
+        currentDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
 
-            currentDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
+        await EnsureWebView2ReadyAsync();
 
-            await EnsureWebView2ReadyAsync();
+        string markdown = await File.ReadAllTextAsync(filePath);
 
-            string markdown = await File.ReadAllTextAsync(filePath);
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build();
 
-            var pipeline = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
-                .Build();
+        string htmlBody = Markdig.Markdown.ToHtml(markdown, pipeline);
 
-            string htmlBody =  Markdig.Markdown.ToHtml(markdown, pipeline);
-
-            string baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
-            string linkInterceptScript = @"
+        string baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
+        string linkInterceptScript = @"
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('click', function(e) {
@@ -62,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>";
 
-            string html = $@"
+        string html = $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -95,57 +85,71 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 </html>";
 
-            string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
-            File.WriteAllText(tempHtmlPath, html);
-            webView.Source = new Uri(tempHtmlPath);
-        }
+        string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
+        File.WriteAllText(tempHtmlPath, html);
+        webView.Source = new Uri(tempHtmlPath);
+    }
 
-        private async Task EnsureWebView2ReadyAsync()
+    private async Task EnsureWebView2ReadyAsync()
+    {
+        if (webView.CoreWebView2 == null)
         {
-            if (webView.CoreWebView2 == null)
-            {
-                await webView.EnsureCoreWebView2Async();
-            }
-
-            webView.CoreWebView2.WebMessageReceived -= WebMessageReceived;
-            webView.CoreWebView2.WebMessageReceived += WebMessageReceived;
-
-            webView.CoreWebView2.NavigationStarting -= NavigationStarting;
-            webView.CoreWebView2.NavigationStarting += NavigationStarting;
+            await webView.EnsureCoreWebView2Async();
         }
 
-        private void WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+        if (webView.CoreWebView2 == null)
         {
-            string? href = e.TryGetWebMessageAsString();
-            if (string.IsNullOrEmpty(href) || currentDirectory == null)
-                return;
-
-            string fileOnly = href.Split('?', '#')[0];
-            string targetPath = Path.Combine(currentDirectory, fileOnly);
-            if (File.Exists(targetPath))
-            {
-                LoadMarkdown(targetPath);
-            }
+            throw new InvalidOperationException("WebView2 is not initialized.");
         }
 
-        private void NavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
+        webView.CoreWebView2.WebMessageReceived -= WebMessageReceived;
+        webView.CoreWebView2.WebMessageReceived += WebMessageReceived;
+
+        webView.CoreWebView2.NavigationStarting -= NavigationStarting;
+        webView.CoreWebView2.NavigationStarting += NavigationStarting;
+    }
+
+    private void WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        string? href = e.TryGetWebMessageAsString();
+        if (string.IsNullOrEmpty(href) || currentDirectory == null)
+            return;
+
+        string fileOnly = href.Split('?', '#')[0];
+        string targetPath = Path.Combine(currentDirectory, fileOnly);
+        if (File.Exists(targetPath))
         {
-            if (string.IsNullOrEmpty(e.Uri) || currentDirectory == null)
-                return;
+            LoadMarkdown(targetPath);
+        }
+    }
 
-            if (e.Uri.StartsWith("file://", StringComparison.OrdinalIgnoreCase) &&
-                e.Uri.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+    private void NavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Uri) || currentDirectory == null)
+            return;
+
+        if (e.Uri.StartsWith("file://", StringComparison.OrdinalIgnoreCase) &&
+            e.Uri.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+        {
+            e.Cancel = true;
+
+            string localPath = Uri.UnescapeDataString(new Uri(e.Uri).LocalPath);
+            string fullPath = Path.GetFullPath(localPath);
+
+            if (File.Exists(fullPath))
             {
-                e.Cancel = true;
-
-                string localPath = Uri.UnescapeDataString(new Uri(e.Uri).LocalPath);
-                string fullPath = Path.GetFullPath(localPath);
-
-                if (File.Exists(fullPath))
-                {
-                    LoadMarkdown(fullPath);
-                }
+                LoadMarkdown(fullPath);
             }
         }
+    }
+
+    private void btnBack_Click(object sender, EventArgs e)
+    {
+        webView.GoBack();
+    }
+
+    private void btnForward_Click(object sender, EventArgs e)
+    {
+        webView.GoForward();
     }
 }
