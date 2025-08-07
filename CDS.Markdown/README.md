@@ -30,3 +30,7 @@ Pull requests are welcome!
 
 ## Repository
 https://github.com/nooogle/CDS.Markdown
+
+
+## Attributions
+<a href="https://www.flaticon.com/free-icons/markdown" title="markdown icons">Markdown icons created by brajaomar_j - Flaticon</a>
