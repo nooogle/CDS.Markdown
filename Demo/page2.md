@@ -6,20 +6,6 @@ This is the second page of the demo.
 
 ### Tables
 
-a | b
--- | -
-0 | 1
-
-
-+---+---+---+
-| AAAAA | B |
-+---+---+ B +
-| D | E | B |
-+ D +---+---+
-| D | CCCCC |
-+---+---+---+
-
-
 
 | Name    | Age | City      |
 |---------|-----|-----------|

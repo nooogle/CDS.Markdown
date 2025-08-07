@@ -68,7 +68,26 @@ document.addEventListener('DOMContentLoaded', function() {
 <head>
   <meta charset='utf-8'>
   {baseHref}
-  <style>body {{ font-family: sans-serif; padding: 20px; }}</style>
+  <style>
+    body {{ font-family: sans-serif; padding: 20px; }}
+    table {{
+      border-collapse: collapse;
+      width: auto;
+      max-width: 100%;
+      margin-bottom: 1em;
+      word-break: break-word;
+      overflow-x: auto;
+      display: block;
+    }}
+    th, td {{
+      border: 1px solid #888;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word;
+    }}
+    th {{ background: #f0f0f0; }}
+  </style>
   {linkInterceptScript}
 </head>
 <body>
