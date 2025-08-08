@@ -5,6 +5,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Wiki\getting_started\screenshots\welcome-back.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Wiki\index.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

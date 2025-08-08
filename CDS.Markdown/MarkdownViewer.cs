@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,6 +16,8 @@ public partial class MarkdownViewer : UserControl
 {
     // The directory of the currently loaded Markdown file, used for resolving relative links.
     private string? currentDirectory;
+    // Tracks all temp HTML files created for cleanup on dispose.
+    private readonly List<string> tempHtmlFiles = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MarkdownViewer"/> class.
@@ -62,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     while (t && t.tagName !== 'A') t = t.parentElement;
     if (t && t.tagName === 'A') {
       let href = t.getAttribute('href');
-      if (href && href.match(/\.md($|[#?])/i)) {
+      if (href && href.match(/\\.md($|[#?])/i)) {
         e.preventDefault();
         window.chrome.webview.postMessage(href);
       }
@@ -108,6 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
         string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
         File.WriteAllText(tempHtmlPath, html);
         webView.Source = new Uri(tempHtmlPath);
+
+        // Track the temp file for later cleanup
+        tempHtmlFiles.Add(tempHtmlPath);
     }
 
     /// <summary>
@@ -197,5 +203,21 @@ document.addEventListener('DOMContentLoaded', function() {
     private void btnForward_Click(object sender, EventArgs e)
     {
         webView.GoForward();
+    }
+
+    /// <summary>
+    /// Cleans up all temporary HTML files created by this control.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            foreach (var tempFile in tempHtmlFiles)
+            {
+                try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { /* Ignore errors */ }
+            }
+            tempHtmlFiles.Clear();
+        }
+        base.Dispose(disposing);
     }
 }

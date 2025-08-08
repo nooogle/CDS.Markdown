@@ -10,7 +10,7 @@ This help system uses Markdown files and folders to organize content, just like 
 
 ## Screenshots
 
-Here’s what the welcome screen looks like:
+Here's what the welcome screen looks like:
 
 ![Welcome](screenshots/welcome-back.png)
 
