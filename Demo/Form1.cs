@@ -25,7 +25,7 @@ public partial class Form1 : Form
 
         try
         {
-            await markdownViewer.LoadMarkdownAsync("index.md");
+            await markdownViewer.LoadMarkdownAsync(@"wiki/index.md");
         }
         catch (Exception ex)
         {

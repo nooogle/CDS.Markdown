@@ -5,19 +5,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="index.md">
+    <None Update="Wiki\index.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="faq.md">
+    <None Update="Wiki\faq.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="getting_started\intro.md">
+    <None Update="Wiki\getting_started\intro.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="features\overview.md">
+    <None Update="Wiki\features\overview.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="features\advanced.md">
+    <None Update="Wiki\features\advanced.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
