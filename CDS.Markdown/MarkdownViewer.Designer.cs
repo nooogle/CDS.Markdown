@@ -1,4 +1,4 @@
-namespace CDS.Markdown
+﻿namespace CDS.Markdown
 {
     partial class MarkdownViewer
     {
@@ -13,8 +13,9 @@ namespace CDS.Markdown
         {
             webView = new Microsoft.Web.WebView2.WinForms.WebView2();
             panel1 = new Panel();
-            btnBack = new Button();
+            btnHome = new Button();
             btnForward = new Button();
+            btnBack = new Button();
             ((System.ComponentModel.ISupportInitialize)webView).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -33,34 +34,54 @@ namespace CDS.Markdown
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnHome);
             panel1.Controls.Add(btnForward);
             panel1.Controls.Add(btnBack);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Padding = new Padding(12);
+            panel1.Padding = new Padding(3);
             panel1.Size = new Size(438, 49);
             panel1.TabIndex = 1;
             // 
-            // btnBack
+            // btnHome
             // 
-            btnBack.Location = new Point(15, 15);
-            btnBack.Name = "btnBack";
-            btnBack.Size = new Size(75, 23);
-            btnBack.TabIndex = 0;
-            btnBack.Text = "Back";
-            btnBack.UseVisualStyleBackColor = true;
-            btnBack.Click += btnBack_Click;
+            btnHome.FlatAppearance.BorderSize = 0;
+            btnHome.FlatStyle = FlatStyle.Flat;
+            btnHome.Font = new Font("Segoe UI Symbol", 12F);
+            btnHome.Image = Properties.Resources.home_button_2;
+            btnHome.Location = new Point(6, 6);
+            btnHome.Name = "btnHome";
+            btnHome.Size = new Size(54, 37);
+            btnHome.TabIndex = 2;
+            btnHome.UseVisualStyleBackColor = true;
+            btnHome.Click += btnHome_Click;
             // 
             // btnForward
             // 
-            btnForward.Location = new Point(96, 15);
+            btnForward.FlatAppearance.BorderSize = 0;
+            btnForward.FlatStyle = FlatStyle.Flat;
+            btnForward.Font = new Font("Segoe UI Symbol", 12F);
+            btnForward.Image = Properties.Resources.right_arrow;
+            btnForward.Location = new Point(126, 6);
             btnForward.Name = "btnForward";
-            btnForward.Size = new Size(75, 23);
+            btnForward.Size = new Size(54, 37);
             btnForward.TabIndex = 1;
-            btnForward.Text = "Forward";
             btnForward.UseVisualStyleBackColor = true;
             btnForward.Click += btnForward_Click;
+            // 
+            // btnBack
+            // 
+            btnBack.FlatAppearance.BorderSize = 0;
+            btnBack.FlatStyle = FlatStyle.Flat;
+            btnBack.Font = new Font("Segoe UI Symbol", 12F);
+            btnBack.Image = Properties.Resources.left_align;
+            btnBack.Location = new Point(66, 6);
+            btnBack.Name = "btnBack";
+            btnBack.Size = new Size(54, 37);
+            btnBack.TabIndex = 0;
+            btnBack.UseVisualStyleBackColor = true;
+            btnBack.Click += btnBack_Click;
             // 
             // MarkdownViewer
             // 
@@ -79,5 +100,6 @@ namespace CDS.Markdown
         private Panel panel1;
         private Button btnForward;
         private Button btnBack;
+        private Button btnHome;
     }
 }

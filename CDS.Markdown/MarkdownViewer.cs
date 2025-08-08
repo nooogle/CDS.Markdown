@@ -18,6 +18,8 @@ public partial class MarkdownViewer : UserControl
     private string? currentDirectory;
     // Tracks all temp HTML files created for cleanup on dispose.
     private readonly List<string> tempHtmlFiles = new();
+    // Stores the path to the original (home) markdown file.
+    private string? homeMarkdownPath;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MarkdownViewer"/> class.
@@ -28,12 +30,24 @@ public partial class MarkdownViewer : UserControl
     }
 
     /// <summary>
-    /// Loads and renders a Markdown file asynchronously.
+    /// Loads and renders a Markdown file asynchronously. Stores the path for 'Home' navigation.
     /// </summary>
     /// <param name="filePath">The path to the Markdown file.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     /// <exception cref="FileNotFoundException">Thrown if the file does not exist.</exception>
     public async Task LoadMarkdownAsync(string filePath)
+    {
+        homeMarkdownPath = filePath;
+        await InternalLoadMarkdownAsync(filePath);
+    }
+
+    /// <summary>
+    /// Loads and renders a Markdown file asynchronously (internal use only, does not update home path).
+    /// </summary>
+    /// <param name="filePath">The path to the Markdown file.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="FileNotFoundException">Thrown if the file does not exist.</exception>
+    private async Task InternalLoadMarkdownAsync(string filePath)
     {
         if (!File.Exists(filePath))
         {
@@ -186,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (File.Exists(targetPath))
         {
             // Fire-and-forget: load the new Markdown file.
-            _ = LoadMarkdownAsync(targetPath);
+            _ = InternalLoadMarkdownAsync(targetPath);
         }
     }
 
@@ -212,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (File.Exists(fullPath))
             {
                 // Fire-and-forget: load the new Markdown file.
-                _ = LoadMarkdownAsync(fullPath);
+                _ = InternalLoadMarkdownAsync(fullPath);
             }
         }
     }
@@ -286,5 +300,13 @@ document.addEventListener('DOMContentLoaded', function() {
             cachedGithubMarkdownCss = "";
         }
         return cachedGithubMarkdownCss;
+    }
+
+    private void btnHome_Click(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(homeMarkdownPath))
+        {
+            _ = InternalLoadMarkdownAsync(homeMarkdownPath);
+        }
     }
 }
