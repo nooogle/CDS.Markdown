@@ -42,7 +42,6 @@ public partial class MarkdownViewer : UserControl
 
         // Set the current directory for resolving relative links.
         currentDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
-
         await EnsureWebView2ReadyAsync();
 
         // Read the Markdown file content.
@@ -58,7 +57,67 @@ public partial class MarkdownViewer : UserControl
 
         // Set base href for relative links and inject script to intercept .md links.
         var baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
-        var linkInterceptScript = @"<script>
+        var html = GenerateHtmlDocument(baseHref, htmlBody);
+
+        // Write the HTML to a temporary file and navigate the WebView to it.
+        string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
+        File.WriteAllText(tempHtmlPath, html);
+        webView.Source = new Uri(tempHtmlPath);
+
+        // Track the temp file for later cleanup
+        tempHtmlFiles.Add(tempHtmlPath);
+    }
+
+    /// <summary>
+    /// Generates the full HTML document for the markdown content.
+    /// </summary>
+    private static string GenerateHtmlDocument(string baseHref, string htmlBody)
+    {
+        return 
+$@"<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  {baseHref}
+  <style>
+    {DefaultCss}
+  </style>
+  {LinkInterceptScript}
+</head>
+<body>
+{htmlBody}
+</body>
+</html>";
+    }
+
+    /// <summary>
+    /// The default CSS for markdown rendering.
+    /// </summary>
+    private static string DefaultCss => @"
+    body { font-family: sans-serif; padding: 20px; }
+    table {
+      border-collapse: collapse;
+      width: auto;
+      max-width: 100%;
+      margin-bottom: 1em;
+      word-break: break-word;
+      overflow-x: auto;
+      display: block;
+    }
+    th, td {
+      border: 1px solid #888;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word;
+    }
+    th { background: #f0f0f0; }
+    ";
+
+    /// <summary>
+    /// The script to intercept .md link clicks and route them through the viewer.
+    /// </summary>
+    private static string LinkInterceptScript => @"<script>
 document.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('click', function(e) {
     let t = e.target;
@@ -73,48 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }, true);
 });
 </script>";
-
-        // Compose the full HTML document.
-        string html = $@"<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='utf-8'>
-  {baseHref}
-  <style>
-    body {{ font-family: sans-serif; padding: 20px; }}
-    table {{
-      border-collapse: collapse;
-      width: auto;
-      max-width: 100%;
-      margin-bottom: 1em;
-      word-break: break-word;
-      overflow-x: auto;
-      display: block;
-    }}
-    th, td {{
-      border: 1px solid #888;
-      padding: 6px 10px;
-      text-align: left;
-      vertical-align: top;
-      word-break: break-word;
-    }}
-    th {{ background: #f0f0f0; }}
-  </style>
-  {linkInterceptScript}
-</head>
-<body>
-{htmlBody}
-</body>
-</html>";
-
-        // Write the HTML to a temporary file and navigate the WebView to it.
-        string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
-        File.WriteAllText(tempHtmlPath, html);
-        webView.Source = new Uri(tempHtmlPath);
-
-        // Track the temp file for later cleanup
-        tempHtmlFiles.Add(tempHtmlPath);
-    }
 
     /// <summary>
     /// Ensures the WebView2 control is initialized and event handlers are attached.
