@@ -12,18 +12,12 @@
     <PackageId>CDS.Markdown</PackageId>
     <Title>CDS.Markdown</Title>
     <Description>Easy-to-use .NET 8 WinForms control for rendering Markdown using Markdig and WebView2.</Description>
-    <Authors>Jon Shadforth</Authors>
-    <Company>Carpe Diem Systems</Company>
     <PackageTags>markdown;winforms;webview2;markdig;viewer;utility</PackageTags>
     <RepositoryUrl>https://github.com/nooogle/CDS.Markdown</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/nooogle/CDS.Markdown</PackageProjectUrl>
-    <Copyright>Copyright © 2025 Carpe Diem Systems</Copyright>
     <PackageReleaseNotes>Initial public release.</PackageReleaseNotes>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>

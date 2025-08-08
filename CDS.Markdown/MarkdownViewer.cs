@@ -17,7 +17,8 @@ public partial class MarkdownViewer : UserControl
     }
 
 
-    public async void LoadMarkdown(string filePath)
+
+    public async Task LoadMarkdownAsync(string filePath)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException("Markdown file not found", filePath);
@@ -34,8 +35,8 @@ public partial class MarkdownViewer : UserControl
 
         string htmlBody = Markdig.Markdown.ToHtml(markdown, pipeline);
 
-        string baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
-        string linkInterceptScript = @"
+            var baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
+            var linkInterceptScript = @"
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('click', function(e) {
@@ -113,20 +114,24 @@ document.addEventListener('DOMContentLoaded', function() {
     {
         string? href = e.TryGetWebMessageAsString();
         if (string.IsNullOrEmpty(href) || currentDirectory == null)
+        {
             return;
+        }
 
         string fileOnly = href.Split('?', '#')[0];
         string targetPath = Path.Combine(currentDirectory, fileOnly);
         if (File.Exists(targetPath))
         {
-            LoadMarkdown(targetPath);
+            _ = LoadMarkdownAsync(targetPath); // Fire-and-forget, safe in event handler context
         }
     }
 
     private void NavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
         if (string.IsNullOrEmpty(e.Uri) || currentDirectory == null)
+        {
             return;
+        }
 
         if (e.Uri.StartsWith("file://", StringComparison.OrdinalIgnoreCase) &&
             e.Uri.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
@@ -138,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (File.Exists(fullPath))
             {
-                LoadMarkdown(fullPath);
+                _ = LoadMarkdownAsync(fullPath); // Fire-and-forget, safe in event handler context
             }
         }
     }
