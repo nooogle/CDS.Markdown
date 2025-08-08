@@ -14,6 +14,7 @@ This repository contains:
   - Renders Markdown using [Markdig](https://github.com/lunet-io/markdig)
   - Displays HTML via [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/)
   - Supports advanced Markdown extensions
+  - Uses embedded [GitHub Markdown CSS](https://github.com/sindresorhus/github-markdown-css) for GitHub-style rendering
   - Easy to use: just add the control and call `LoadMarkdown()`
 - **NuGet**: Ready for packaging and public release
 
@@ -22,25 +23,11 @@ This repository contains:
 - **Purpose**: Shows how to use the `MarkdownViewer` control in a real application.
 - **Usage**: Loads and displays Markdown files from the project directory.
 
-## Getting Started
+## GitHub Markdown CSS
 
-1. Build the solution. The NuGet package for CDS.Markdown will be generated in the output directory.
-2. Reference the CDS.Markdown NuGet package or project in your own WinForms app.
-3. Add the `MarkdownViewer` control to your form:
-   ```csharp
-   using CDS.Markdown;
-   var viewer = new MarkdownViewer();
-   viewer.LoadMarkdown("README.md");
-   this.Controls.Add(viewer);
-   ```
+This project embeds [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) as an embedded resource to provide GitHub-style Markdown rendering.  
+The CSS is included in the assembly, so no additional files or downloads are required when consuming the package.
 
-## Development
-- .NET 8 is required.
-- The solution follows modern C# and .NET best practices (see `.github/copilot-instructions.md`).
-- Contributions are welcome! Please open issues or pull requests.
+### Attribution
 
-## License
-MIT License. See [CDS.Markdown/LICENSE](CDS.Markdown/LICENSE).
-
-## Repository
-https://github.com/nooogle/CDS.Markdown
+The [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) is licensed under the MIT License:

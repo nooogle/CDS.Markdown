@@ -272,9 +272,19 @@ document.addEventListener('DOMContentLoaded', function() {
             return cachedGithubMarkdownCss;
         }
 
-        // Adjust the path as needed for your project structure/output
-        var cssPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources/github-markdown.css");
-        cachedGithubMarkdownCss = File.Exists(cssPath) ? File.ReadAllText(cssPath) : "";
+        var assembly = typeof(MarkdownViewer).Assembly;
+        var resourceName = "CDS.Markdown.Resources.github-markdown.css"; // Adjust if your namespace/folder structure differs
+
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream != null)
+        {
+            using var reader = new StreamReader(stream);
+            cachedGithubMarkdownCss = reader.ReadToEnd();
+        }
+        else
+        {
+            cachedGithubMarkdownCss = "";
+        }
         return cachedGithubMarkdownCss;
     }
 }
