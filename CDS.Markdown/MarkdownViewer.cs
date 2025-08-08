@@ -70,28 +70,36 @@ public partial class MarkdownViewer : UserControl
 
     /// <summary>
     /// Generates the full HTML document for the markdown content.
+    /// - Injects a <base> tag for correct resolution of relative links.
+    /// - Embeds both default and GitHub Markdown CSS for styling.
+    /// - Wraps the rendered HTML in a <div class="markdown-body"> to ensure GitHub CSS selectors apply.
+    /// - Injects a script to intercept .md link clicks and route them through the viewer.
     /// </summary>
     private static string GenerateHtmlDocument(string baseHref, string htmlBody)
     {
-        return 
-$@"<!DOCTYPE html>
+        var githubCss = GetGithubMarkdownCss();
+        return $@"<!DOCTYPE html>
 <html>
 <head>
   <meta charset='utf-8'>
   {baseHref}
   <style>
     {DefaultCss}
+    {githubCss}
   </style>
   {LinkInterceptScript}
 </head>
 <body>
+<div class=""markdown-body"">
 {htmlBody}
+</div>
 </body>
 </html>";
     }
 
     /// <summary>
     /// The default CSS for markdown rendering.
+    /// This provides basic table and body styling to supplement GitHub's CSS.
     /// </summary>
     private static string DefaultCss => @"
     body { font-family: sans-serif; padding: 20px; }
@@ -116,6 +124,9 @@ $@"<!DOCTYPE html>
 
     /// <summary>
     /// The script to intercept .md link clicks and route them through the viewer.
+    /// - Listens for click events on anchor tags.
+    /// - If the link points to a .md file, prevents default navigation and sends the href to the host app via WebView2 messaging.
+    /// This allows seamless in-app navigation between Markdown files.
     /// </summary>
     private static string LinkInterceptScript => @"<script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -229,12 +240,41 @@ document.addEventListener('DOMContentLoaded', function() {
     {
         if (disposing)
         {
+            if (components != null)
+            {
+                components.Dispose();
+            }
             foreach (var tempFile in tempHtmlFiles)
             {
-                try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { /* Ignore errors */ }
+                try
+                {
+                    if (File.Exists(tempFile))
+                    {
+                        File.Delete(tempFile);
+                    }
+                }
+                catch
+                {
+                    // Ignore errors
+                }
             }
             tempHtmlFiles.Clear();
         }
         base.Dispose(disposing);
+    }
+
+    private static string? cachedGithubMarkdownCss;
+
+    private static string GetGithubMarkdownCss()
+    {
+        if (cachedGithubMarkdownCss != null)
+        {
+            return cachedGithubMarkdownCss;
+        }
+
+        // Adjust the path as needed for your project structure/output
+        var cssPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources/github-markdown.css");
+        cachedGithubMarkdownCss = File.Exists(cssPath) ? File.ReadAllText(cssPath) : "";
+        return cachedGithubMarkdownCss;
     }
 }

@@ -25,8 +25,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\github-markdown.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Markdown-mark.ico" />
     <Content Include="Markdown-mark.png" />
+    <Content Include="Resources\github-markdown.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
