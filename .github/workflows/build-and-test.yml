@@ -7,11 +7,13 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -23,6 +25,15 @@ jobs:
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+
+      - name: Pack
+        run: dotnet pack CDS.Markdown/CDS.Markdown.csproj --configuration Release --no-build --output ./nupkg
+
+      - name: List nupkg directory
+        run: dir ./nupkg
+
+      - name: List bin/Release directory
+        run: dir CDS.Markdown\\bin\\Release
 
       - name: Test
         run: dotnet test --configuration Release --no-build --logger trx
