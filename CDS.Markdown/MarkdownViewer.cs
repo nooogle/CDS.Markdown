@@ -1,9 +1,4 @@
-using System;
-using System.IO;
-using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
-using System.Collections.Generic;
-using Markdig;
 
 namespace CDS.Markdown;
 
@@ -13,31 +8,12 @@ namespace CDS.Markdown;
 public partial class MarkdownViewer : UserControl
 {
     /// <summary>Tracks all temp HTML files created for cleanup on dispose.</summary>
-    private readonly List<string> tempHtmlFiles = new();
+    private readonly TempHtmlFileManager tempHtmlFileManager = new();
 
     /// <summary>
-    /// The directory of the currently loaded Markdown file, used for resolving relative links.
+    /// The Markdown viewer session, managing state and navigation.
     /// </summary>
-    private string? currentDirectory;
-
-    /// <summary>
-    /// Stores the path to the original (home) markdown file.
-    /// </summary>
-    private string? homeMarkdownPath;
-
-    /// <summary>
-    /// The Markdown renderer used to convert markdown to HTML.
-    /// </summary>
-    private readonly MarkdownRenderer markdownRenderer = new();
-
-    /// <summary>
-    /// The HTML document builder for wrapping rendered HTML with CSS and scripts.
-    /// </summary>
-    private static readonly MarkdownHtmlDocumentBuilder htmlBuilder = new(
-        GetGithubMarkdownCss(),
-        DefaultCss,
-        LinkInterceptScript
-    );
+    private readonly MarkdownViewerSession session = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MarkdownViewer"/> class.
@@ -45,6 +21,7 @@ public partial class MarkdownViewer : UserControl
     public MarkdownViewer()
     {
         InitializeComponent();
+        session.HtmlReady += OnHtmlReadyAsync;
     }
 
     /// <summary>
@@ -55,90 +32,18 @@ public partial class MarkdownViewer : UserControl
     /// <exception cref="FileNotFoundException">Thrown if the file does not exist.</exception>
     public async Task LoadMarkdownAsync(string filePath)
     {
-        homeMarkdownPath = filePath;
-        await InternalLoadMarkdownAsync(filePath);
+        await session.NavigateToAsync(filePath, setHome: true);
     }
 
     /// <summary>
-    /// Loads and renders a Markdown file asynchronously (internal use only, does not update home path).
+    /// Handles the HtmlReady event from the MarkdownViewerSession.
     /// </summary>
-    /// <param name="filePath">The path to the Markdown file.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    /// <exception cref="FileNotFoundException">Thrown if the file does not exist.</exception>
-    private async Task InternalLoadMarkdownAsync(string filePath)
+    private async Task OnHtmlReadyAsync(string html)
     {
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException("Markdown file not found", filePath);
-        }
-
-        // Set the current directory for resolving relative links.
-        currentDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
         await EnsureWebView2ReadyAsync();
-
-        // Read the Markdown file content.
-        string markdown = await File.ReadAllTextAsync(filePath);
-        string htmlBody = markdownRenderer.RenderToHtml(markdown);
-
-        // Set base href for relative links and inject script to intercept .md links.
-        var baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
-        string html = htmlBuilder.Build(htmlBody, baseHref);
-
-        // Write the HTML to a temporary file and navigate the WebView to it.
-        string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
-        File.WriteAllText(tempHtmlPath, html);
+        string tempHtmlPath = tempHtmlFileManager.CreateTempHtmlFile(html);
         webView.Source = new Uri(tempHtmlPath);
-
-        // Track the temp file for later cleanup
-        tempHtmlFiles.Add(tempHtmlPath);
     }
-
-    /// <summary>
-    /// The default CSS for markdown rendering.
-    /// This provides basic table and body styling to supplement GitHub's CSS.
-    /// </summary>
-    public static string DefaultCss => @"
-    body { font-family: sans-serif; padding: 20px; }
-    table {
-      border-collapse: collapse;
-      width: auto;
-      max-width: 100%;
-      margin-bottom: 1em;
-      word-break: break-word;
-      overflow-x: auto;
-      display: block;
-    }
-    th, td {
-      border: 1px solid #888;
-      padding: 6px 10px;
-      text-align: left;
-      vertical-align: top;
-      word-break: break-word;
-    }
-    th { background: #f0f0f0; }
-    ";
-
-    /// <summary>
-    /// The script to intercept .md link clicks and route them through the viewer.
-    /// - Listens for click events on anchor tags.
-    /// - If the link points to a .md file, prevents default navigation and sends the href to the host app via WebView2 messaging.
-    /// This allows seamless in-app navigation between Markdown files.
-    /// </summary>
-    public static string LinkInterceptScript => @"<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.body.addEventListener('click', function(e) {
-    let t = e.target;
-    while (t && t.tagName !== 'A') t = t.parentElement;
-    if (t && t.tagName === 'A') {
-      let href = t.getAttribute('href');
-      if (href && href.match(/\\.md($|[#?])/i)) {
-        e.preventDefault();
-        window.chrome.webview.postMessage(href);
-      }
-    }
-  }, true);
-});
-</script>";
 
     /// <summary>
     /// Ensures the WebView2 control is initialized and event handlers are attached.
@@ -171,19 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     private void WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
         string? href = e.TryGetWebMessageAsString();
-        if (string.IsNullOrEmpty(href) || currentDirectory == null)
-        {
-            return;
-        }
-
-        // Remove query/hash from href and resolve the target path.
-        string fileOnly = href.Split('?', '#')[0];
-        string targetPath = Path.Combine(currentDirectory, fileOnly);
-        if (File.Exists(targetPath))
-        {
-            // Fire-and-forget: load the new Markdown file.
-            _ = InternalLoadMarkdownAsync(targetPath);
-        }
+        _ = session.HandleMarkdownLinkAsync(href);
     }
 
     /// <summary>
@@ -191,42 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /// </summary>
     private void NavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
-        if (string.IsNullOrEmpty(e.Uri) || currentDirectory == null)
-        {
-            return;
-        }
-
-        // Intercept navigation to local .md files and load them in the viewer instead.
-        if (e.Uri.StartsWith("file://", StringComparison.OrdinalIgnoreCase) &&
-            e.Uri.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-        {
-            e.Cancel = true;
-
-            string localPath = Uri.UnescapeDataString(new Uri(e.Uri).LocalPath);
-            string fullPath = Path.GetFullPath(localPath);
-
-            if (File.Exists(fullPath))
-            {
-                // Fire-and-forget: load the new Markdown file.
-                _ = InternalLoadMarkdownAsync(fullPath);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Navigates the WebView2 control back in its history.
-    /// </summary>
-    private void btnBack_Click(object sender, EventArgs e)
-    {
-        webView.GoBack();
-    }
-
-    /// <summary>
-    /// Navigates the WebView2 control forward in its history.
-    /// </summary>
-    private void btnForward_Click(object sender, EventArgs e)
-    {
-        webView.GoForward();
+        _ = session.HandleNavigationUriAsync(e.Uri, () => e.Cancel = true);
     }
 
     /// <summary>
@@ -240,55 +98,33 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 components.Dispose();
             }
-            foreach (var tempFile in tempHtmlFiles)
-            {
-                try
-                {
-                    if (File.Exists(tempFile))
-                    {
-                        File.Delete(tempFile);
-                    }
-                }
-                catch
-                {
-                    // Ignore errors
-                }
-            }
-            tempHtmlFiles.Clear();
+            tempHtmlFileManager.Dispose();
         }
         base.Dispose(disposing);
     }
 
-    private static string? cachedGithubMarkdownCss;
 
-    private static string GetGithubMarkdownCss()
-    {
-        if (cachedGithubMarkdownCss != null)
-        {
-            return cachedGithubMarkdownCss;
-        }
-
-        var assembly = typeof(MarkdownViewer).Assembly;
-        var resourceName = "CDS.Markdown.Resources.github-markdown.css"; // Adjust if your namespace/folder structure differs
-
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream != null)
-        {
-            using var reader = new StreamReader(stream);
-            cachedGithubMarkdownCss = reader.ReadToEnd();
-        }
-        else
-        {
-            cachedGithubMarkdownCss = string.Empty;
-        }
-        return cachedGithubMarkdownCss;
-    }
-
+    /// <summary>
+    /// User clicks the "Home" button to load the Markdown file specified in <see cref="LoadMarkdownAsync(string)"/>
+    /// </summary>
     private void btnHome_Click(object sender, EventArgs e)
     {
-        if (!string.IsNullOrEmpty(homeMarkdownPath))
-        {
-            _ = InternalLoadMarkdownAsync(homeMarkdownPath);
-        }
+        _ = session.GoHomeAsync();
+    }
+
+    /// <summary>
+    /// User clicks the "Back" button to navigate to the previous page in the WebView2 history.
+    /// </summary>
+    private void btnBack_Click(object sender, EventArgs e)
+    {
+        webView.GoBack();
+    }
+
+    /// <summary>
+    /// User clicks the "Forward" button to navigate to the next page in the WebView2 history.
+    /// </summary>
+    private void btnForward_Click(object sender, EventArgs e)
+    {
+        webView.GoForward();
     }
 }
