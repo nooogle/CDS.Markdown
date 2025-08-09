@@ -5,7 +5,20 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!--
+      MSB3277: WindowsBase version conflict warning
+
+      This project targets .NET 8 WinForms, which references WindowsBase, Version=4.0.0.0.
+      The Microsoft.Web.WebView2 NuGet package also brings in a WPF wrapper assembly
+      (Microsoft.Web.WebView2.Wpf) that references WindowsBase, Version=5.0.0.0.
+
+      .NET 8 resolves these conflicts at runtime, and our project does not use WPF,
+      so this warning is safe to suppress. The NoWarn property below disables MSB3277
+      to keep the build output clean.
+    -->
     <NoWarn>$(NoWarn);MSB3277</NoWarn>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,3 +36,4 @@
   </ItemGroup>
 
 </Project>
+

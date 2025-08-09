@@ -54,9 +54,19 @@ This repository contains:
     }
    ```
 
-> The viewer expects the any Markdown files to be in the same directory 
+> Tip 1: the viewer expects the any Markdown files to be in the same directory 
 as the executable, or a subdirectory of it. See the `Demo` project for an example
 of using subdirectories.
+
+> Tip 2: the project uses the WebView2 control which causes compile time
+warnings around version conflicts with the WindowsBase assembly. The
+following property can be added to the project file to suppress these warnings:
+```xml
+<PropertyGroup>
+    <NoWarn>$(NoWarn);MSB3277</NoWarn>
+</PropertyGroup>
+```
+
 
 
 ## GitHub Markdown CSS
