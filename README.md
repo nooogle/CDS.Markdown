@@ -24,14 +24,37 @@ This repository contains:
 - **Usage**: Loads and displays Markdown files from the project directory.
 
 
-> Click here to view the demo wiki pages: [CDS.Markdown Demo Wiki](../Demo/wiki/index.md)
+> Click here to view the demo wiki pages: [CDS.Markdown Demo Wiki](Demo/wiki/index.md)
 
+## How to Use CDS.Markdown
+
+1. Use the Nuget package manager to install the `CDS.Markdown` package 
+   in your WinForms project.
+2. Add a `MarkdownViewer` control to your form.
+3. Create a Markdown file in your project directory, for example `readme.md`.
+3. Set the Markdown file's Copy to Output Directory to `Copy if newer`.
+3. In your form's code, call the `LoadMarkdown()` method on the 
+   `MarkdownViewer` control, passing the path to your Markdown file:
+   ```csharp
+   markdownViewer1.LoadMarkdown("readme.md");
+   ```
+
+> The viewer expects the any Markdown files to be in the same directory 
+as the executable, or a subdirectory of it. See the `Demo` project for an example.
 
 ## GitHub Markdown CSS
 
 This project embeds [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) as an embedded resource to provide GitHub-style Markdown rendering.  
 The CSS is included in the assembly, so no additional files or downloads are required when consuming the package.
 
-### Attribution
+## How this was written!
+I couldn't find an existing WinForms Markdown control that met my needs, 
+so I reviewed the requirements with ChatGPT and used it to create a detailed 
+prompt for Copilot Agent mode. This helps created the initial code, including
+HTML, scripts and CSS. Nearly every other change was also done via prompts,
+a process I'm calling `flow coding` :smile: It's like Vibe Coding, but 
+with a more human interaction and many files and projects!
+
+## Attributions
 
 The [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) is licensed under the MIT License:
