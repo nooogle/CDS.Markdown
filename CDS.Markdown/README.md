@@ -1,6 +1,11 @@
 # CDS.Markdown
 
-A simple .NET 8 WinForms control for rendering Markdown using Markdig and WebView2.
+A simple .NET WinForms control for rendering Markdown using Markdig and WebView2.
+
+**Compatible with:**
+- .NET Framework 4.8
+- .NET 6
+- .NET 8
 
 ## Features
 - Render Markdown files in your WinForms app

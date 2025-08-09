@@ -1,13 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFrameworks>net8.0-windows;net6.0-windows;net48</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>false</UseWPF>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Markdown-mark.ico</ApplicationIcon>
-    <PackageIcon>Markdown-mark.png</PackageIcon>
+    <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>package.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- NuGet metadata for public release -->
+    <PackageId>CDS.Markdown</PackageId>
+    <Title>CDS.Markdown</Title>
+    <Description>Easy-to-use .NET WinForms control for rendering Markdown using Markdig and WebView2.</Description>
+    <PackageTags>markdown;winforms;webview2;markdig;viewer;utility</PackageTags>
+    <RepositoryUrl>https://github.com/nooogle/CDS.Markdown</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nooogle/CDS.Markdown</PackageProjectUrl>
+    <PackageReleaseNotes>Initial public release.</PackageReleaseNotes>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
 
     <!--
       MSB3277: WindowsBase version conflict warning
@@ -21,30 +36,24 @@
       to keep the build output clean.
     -->
     <NoWarn>$(NoWarn);MSB3277</NoWarn>
-
-    <!-- NuGet metadata for public release -->
-    <PackageId>CDS.Markdown</PackageId>
-    <Title>CDS.Markdown</Title>
-    <Description>Easy-to-use .NET 8 WinForms control for rendering Markdown using Markdig and WebView2.</Description>
-    <PackageTags>markdown;winforms;webview2;markdig;viewer;utility</PackageTags>
-    <RepositoryUrl>https://github.com/nooogle/CDS.Markdown</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/nooogle/CDS.Markdown</PackageProjectUrl>
-    <PackageReleaseNotes>Initial public release.</PackageReleaseNotes>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="package.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\github-markdown.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Markdown-mark.ico" />
-    <Content Include="Markdown-mark.png" />
     <EmbeddedResource Include="Resources\github-markdown.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -68,21 +77,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Markdown-mark.ico">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="Markdown-mark.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
   </ItemGroup>
 
 </Project>

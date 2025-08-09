@@ -37,7 +37,7 @@ public class MarkdownViewerSessionTests
     {
         // Arrange
         var markdown = "# Session Test";
-        await File.WriteAllTextAsync(tempFilePath!, markdown);
+        await TestFileHelper.WriteAllTextAsync(tempFilePath!, markdown);
 
         // Act
         await session!.NavigateToAsync(tempFilePath!);
@@ -52,7 +52,7 @@ public class MarkdownViewerSessionTests
     {
         // Arrange
         var markdown = "# Home Test";
-        await File.WriteAllTextAsync(tempFilePath!, markdown);
+        await TestFileHelper.WriteAllTextAsync(tempFilePath!, markdown);
         await session!.NavigateToAsync(tempFilePath!, setHome: true);
         lastHtml = null;
 
@@ -68,10 +68,10 @@ public class MarkdownViewerSessionTests
     {
         // Arrange
         var markdown = "# Link Test";
-        await File.WriteAllTextAsync(tempFilePath!, markdown);
+        await TestFileHelper.WriteAllTextAsync(tempFilePath!, markdown);
         await session!.NavigateToAsync(tempFilePath!, setHome: true);
         var linkedFile = Path.Combine(Path.GetDirectoryName(tempFilePath!)!, "linked.md");
-        await File.WriteAllTextAsync(linkedFile, "# Linked");
+        await TestFileHelper.WriteAllTextAsync(linkedFile, "# Linked");
         lastHtml = null;
 
         try
@@ -94,10 +94,10 @@ public class MarkdownViewerSessionTests
     {
         // Arrange
         var markdown = "# Nav Test";
-        await File.WriteAllTextAsync(tempFilePath!, markdown);
+        await TestFileHelper.WriteAllTextAsync(tempFilePath!, markdown);
         await session!.NavigateToAsync(tempFilePath!, setHome: true);
         var linkedFile = Path.Combine(Path.GetDirectoryName(tempFilePath!)!, "nav.md");
-        await File.WriteAllTextAsync(linkedFile, "# NavLinked");
+        await TestFileHelper.WriteAllTextAsync(linkedFile, "# NavLinked");
         lastHtml = null;
         bool cancelled = false;
         var uri = new Uri(linkedFile).AbsoluteUri;

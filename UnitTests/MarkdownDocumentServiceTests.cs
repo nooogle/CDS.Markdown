@@ -33,7 +33,7 @@ public class MarkdownDocumentServiceTests
 
         // Arrange
         var markdown = "# Test";
-        await File.WriteAllTextAsync(tempFilePath, markdown);
+        await TestFileHelper.WriteAllTextAsync(tempFilePath, markdown);
         var service = new MarkdownDocumentService();
         var baseHref = "<base href=\"/\">";
 

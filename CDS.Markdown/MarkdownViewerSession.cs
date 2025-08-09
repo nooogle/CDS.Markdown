@@ -78,7 +78,7 @@ public class MarkdownViewerSession
         {
             return;
         }
-        string fileOnly = href.Split('?', '#')[0];
+        string fileOnly = href!.Split('?', '#')[0];
         string targetPath = Path.Combine(currentDirectory, fileOnly);
         if (File.Exists(targetPath))
         {
@@ -95,7 +95,8 @@ public class MarkdownViewerSession
         {
             return;
         }
-        if (uri.StartsWith("file://", StringComparison.OrdinalIgnoreCase) &&
+
+        if (uri!.StartsWith("file://", StringComparison.OrdinalIgnoreCase) &&
             uri.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
         {
             cancelNavigation();

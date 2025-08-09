@@ -38,7 +38,12 @@ public class MarkdownDocumentService
         {
             throw new FileNotFoundException("Markdown file not found", filePath);
         }
+#if NET48
+        string markdown = File.ReadAllText(filePath);
+        await Task.Yield(); // Simulate async for API consistency
+#else
         string markdown = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+#endif
         string htmlBody = renderer.RenderToHtml(markdown);
         return htmlBuilder.Build(htmlBody, baseHref);
     }

@@ -8,10 +8,14 @@ namespace Demo
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+#if NET48
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.Run(new Form1());
+#else
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
+#endif
         }
     }
 }

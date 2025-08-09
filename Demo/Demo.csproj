@@ -78,10 +78,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFrameworks>net8.0-windows;net6.0-windows;net48</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
 
         <!--
       MSB3277: WindowsBase version conflict warning
@@ -95,7 +96,6 @@
       to keep the build output clean.
     -->
     <NoWarn>$(NoWarn);MSB3277</NoWarn>
-
   </PropertyGroup>
 
 </Project>
