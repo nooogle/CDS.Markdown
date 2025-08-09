@@ -19,6 +19,7 @@ public class MarkdownRenderer
     {
         pipeline = new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
+            .UseEmojiAndSmiley()
             .Build();
     }
 
