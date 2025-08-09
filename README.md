@@ -1,5 +1,7 @@
 # CDS.MarkDown Solution
 
+![Build & Test](https://github.com/nooogle/CDS.MarkDown/actions/workflows/ci.yml/badge.svg)
+
 This repository contains:
 
 - **CDS.Markdown**: A .NET 8 WinForms control for rendering Markdown using Markdig and WebView2. Designed for easy integration into your own WinForms applications.
