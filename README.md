@@ -23,6 +23,10 @@ This repository contains:
 - **Purpose**: Shows how to use the `MarkdownViewer` control in a real application.
 - **Usage**: Loads and displays Markdown files from the project directory.
 
+
+> Click here to view the demo wiki pages: [CDS.Markdown Demo Wiki](../Demo/wiki/index.md)
+
+
 ## GitHub Markdown CSS
 
 This project embeds [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) as an embedded resource to provide GitHub-style Markdown rendering.  
