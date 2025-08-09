@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Web.WebView2.Core;
+using System.Collections.Generic;
 using Markdig;
 
 namespace CDS.Markdown;
@@ -14,12 +12,32 @@ namespace CDS.Markdown;
 /// </summary>
 public partial class MarkdownViewer : UserControl
 {
-    // The directory of the currently loaded Markdown file, used for resolving relative links.
-    private string? currentDirectory;
-    // Tracks all temp HTML files created for cleanup on dispose.
+    /// <summary>Tracks all temp HTML files created for cleanup on dispose.</summary>
     private readonly List<string> tempHtmlFiles = new();
-    // Stores the path to the original (home) markdown file.
+
+    /// <summary>
+    /// The directory of the currently loaded Markdown file, used for resolving relative links.
+    /// </summary>
+    private string? currentDirectory;
+
+    /// <summary>
+    /// Stores the path to the original (home) markdown file.
+    /// </summary>
     private string? homeMarkdownPath;
+
+    /// <summary>
+    /// The Markdown renderer used to convert markdown to HTML.
+    /// </summary>
+    private readonly MarkdownRenderer markdownRenderer = new();
+
+    /// <summary>
+    /// The HTML document builder for wrapping rendered HTML with CSS and scripts.
+    /// </summary>
+    private static readonly MarkdownHtmlDocumentBuilder htmlBuilder = new(
+        GetGithubMarkdownCss(),
+        DefaultCss,
+        LinkInterceptScript
+    );
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MarkdownViewer"/> class.
@@ -60,18 +78,11 @@ public partial class MarkdownViewer : UserControl
 
         // Read the Markdown file content.
         string markdown = await File.ReadAllTextAsync(filePath);
-
-        // Build the Markdig pipeline with advanced extensions.
-        var pipeline = new MarkdownPipelineBuilder()
-            .UseAdvancedExtensions()
-            .Build();
-
-        // Convert Markdown to HTML.
-        string htmlBody = Markdig.Markdown.ToHtml(markdown, pipeline);
+        string htmlBody = markdownRenderer.RenderToHtml(markdown);
 
         // Set base href for relative links and inject script to intercept .md links.
         var baseHref = $"<base href=\"file:///{currentDirectory.Replace("\\", "/")}/\">";
-        var html = GenerateHtmlDocument(baseHref, htmlBody);
+        string html = htmlBuilder.Build(htmlBody, baseHref);
 
         // Write the HTML to a temporary file and navigate the WebView to it.
         string tempHtmlPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".html");
@@ -83,39 +94,10 @@ public partial class MarkdownViewer : UserControl
     }
 
     /// <summary>
-    /// Generates the full HTML document for the markdown content.
-    /// - Injects a <base> tag for correct resolution of relative links.
-    /// - Embeds both default and GitHub Markdown CSS for styling.
-    /// - Wraps the rendered HTML in a <div class="markdown-body"> to ensure GitHub CSS selectors apply.
-    /// - Injects a script to intercept .md link clicks and route them through the viewer.
-    /// </summary>
-    private static string GenerateHtmlDocument(string baseHref, string htmlBody)
-    {
-        var githubCss = GetGithubMarkdownCss();
-        return $@"<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='utf-8'>
-  {baseHref}
-  <style>
-    {DefaultCss}
-    {githubCss}
-  </style>
-  {LinkInterceptScript}
-</head>
-<body>
-<div class=""markdown-body"">
-{htmlBody}
-</div>
-</body>
-</html>";
-    }
-
-    /// <summary>
     /// The default CSS for markdown rendering.
     /// This provides basic table and body styling to supplement GitHub's CSS.
     /// </summary>
-    private static string DefaultCss => @"
+    public static string DefaultCss => @"
     body { font-family: sans-serif; padding: 20px; }
     table {
       border-collapse: collapse;
@@ -142,7 +124,7 @@ public partial class MarkdownViewer : UserControl
     /// - If the link points to a .md file, prevents default navigation and sends the href to the host app via WebView2 messaging.
     /// This allows seamless in-app navigation between Markdown files.
     /// </summary>
-    private static string LinkInterceptScript => @"<script>
+    public static string LinkInterceptScript => @"<script>
 document.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('click', function(e) {
     let t = e.target;
@@ -297,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else
         {
-            cachedGithubMarkdownCss = "";
+            cachedGithubMarkdownCss = string.Empty;
         }
         return cachedGithubMarkdownCss;
     }

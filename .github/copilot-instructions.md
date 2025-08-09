@@ -14,7 +14,7 @@ Please generate C# code that follows these practices:
    - Use the file-scoped namespace (`namespace Foo.Bar;`).
 
 2. **Comments**
-   - Add XML documentation (`///`) to all public classes, methods, and properties.
+   - Add XML documentation (`///`) to all public classes, methods, properties, and field.
    - Keep comments meaningful; avoid boilerplate.
    - Use inline comments for complex logic.
 
