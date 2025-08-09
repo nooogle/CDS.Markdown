@@ -1,0 +1,9 @@
+# Tables
+
+This page demonstrates how to use tables in Markdown.
+
+| Name    | Age | City        |
+|---------|-----|-------------|
+| Alice   | 30  | New York    |
+| Bob     | 25  | Los Angeles |
+| Charlie | 35  | Chicago     |
