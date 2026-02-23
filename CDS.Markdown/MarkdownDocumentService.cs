@@ -17,11 +17,14 @@ public class MarkdownDocumentService
     public MarkdownDocumentService()
     {
         githubCss = LoadGithubMarkdownCss();
+        var mermaidBundle = LoadEmbeddedResource("CDS.Markdown.Resources.mermaid.min.js");
         renderer = new MarkdownRenderer();
         htmlBuilder = new MarkdownHtmlDocumentBuilder(
             githubCss,
             MarkdownViewerResources.DefaultCss,
-            MarkdownViewerResources.LinkInterceptScript
+            MarkdownViewerResources.LinkInterceptScript,
+            mermaidBundle,
+            MarkdownViewerResources.MermaidInitScript
         );
     }
 
@@ -59,16 +62,23 @@ public class MarkdownDocumentService
     /// <summary>
     /// Loads the GitHub Markdown CSS from embedded resources.
     /// </summary>
-    private static string LoadGithubMarkdownCss()
+    private static string LoadGithubMarkdownCss() =>
+        LoadEmbeddedResource("CDS.Markdown.Resources.github-markdown.css");
+
+    /// <summary>
+    /// Loads an embedded resource by its fully-qualified manifest resource name.
+    /// Returns an empty string if the resource is not found.
+    /// </summary>
+    /// <param name="resourceName">The fully-qualified manifest resource name.</param>
+    private static string LoadEmbeddedResource(string resourceName)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = "CDS.Markdown.Resources.github-markdown.css";
         using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream != null)
+        if (stream is null)
         {
-            using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
+            return string.Empty;
         }
-        return string.Empty;
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
     }
 }

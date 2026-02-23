@@ -51,4 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
   }, true);
 });
 </script>";
+
+    /// <summary>
+    /// The script that runs after mermaid.min.js is loaded.
+    /// Rewrites Markdig's fenced code output (<c>&lt;pre&gt;&lt;code class="language-mermaid"&gt;</c>)
+    /// into the <c>&lt;div class="mermaid"&gt;</c> elements that Mermaid expects,
+    /// then initialises and runs the renderer.
+    /// </summary>
+    public static string MermaidInitScript => @"<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('code.language-mermaid').forEach(function (el) {
+        var div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = el.textContent;
+        el.closest('pre').replaceWith(div);
+    });
+    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+    mermaid.run();
+});
+</script>";
 }

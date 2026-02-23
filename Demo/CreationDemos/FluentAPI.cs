@@ -42,10 +42,41 @@ public class FluentAPI
             .AddBulletList([
                 ":white_check_mark: Stable fluent API",
                 ":white_check_mark: Targets .NET 8, .NET 10",
+                ":white_check_mark: Mermaid diagram rendering",
                 ":construction: Ordered lists — *coming soon*",
                 ":construction: Tables — *coming soon*",
-                ":construction: Mermaid diagram rendering — *coming soon*",
             ])
+            .AddHeading(":bar_chart: Mermaid Diagram Support", 2)
+            .AddParagraph(
+                "Mermaid diagrams render as **inline SVG** directly in the viewer — " +
+                "the `mermaid.js` bundle is embedded in the assembly so **no internet connection is required**.")
+            .AddHeading("Sequence Diagram", 3)
+            .AddMermaidDiagram(
+                """
+                sequenceDiagram
+                    participant App
+                    participant FluentMarkdownDocument
+                    participant MarkdownRenderer
+                    participant MarkdownViewer
+
+                    App->>FluentMarkdownDocument: AddHeading(), AddMermaidDiagram()...
+                    App->>FluentMarkdownDocument: ToMarkdown()
+                    FluentMarkdownDocument-->>App: markdown string
+                    App->>MarkdownViewer: LoadMarkdownAsync(path)
+                    MarkdownViewer->>MarkdownRenderer: RenderToHtml(markdown)
+                    MarkdownRenderer-->>MarkdownViewer: html (with mermaid div)
+                    MarkdownViewer-->>App: diagram rendered as SVG
+                """)
+            .AddHeading("Flowchart", 3)
+            .AddMermaidDiagram(
+                """
+                flowchart LR
+                    A([Markdown string]) --> B[MarkdownRenderer]
+                    B --> C[HTML + mermaid div]
+                    C --> D[MarkdownHtmlDocumentBuilder]
+                    D --> E[Full HTML page\n+ mermaid.js bundle]
+                    E --> F([WebView2 renders SVG])
+                """)
             .ToMarkdown();
     }
 }

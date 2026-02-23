@@ -51,10 +51,14 @@
 
   <ItemGroup>
     <None Remove="Resources\github-markdown.css" />
+    <None Remove="Resources\mermaid.min.js" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\github-markdown.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\mermaid.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

@@ -77,6 +77,14 @@ public class FluentMarkdownDocument
     }
 
     /// <summary>
+    /// Adds a Mermaid diagram to the document as a fenced <c>mermaid</c> code block.
+    /// The diagram is rendered as an SVG in the <see cref="MarkdownViewer"/> control.
+    /// </summary>
+    /// <param name="diagramDefinition">The Mermaid diagram source (e.g. a flowchart or sequence diagram).</param>
+    public FluentMarkdownDocument AddMermaidDiagram(string diagramDefinition) =>
+        AddCodeBlock(diagramDefinition, "mermaid");
+
+    /// <summary>
     /// Renders the document and returns the complete Markdown string.
     /// </summary>
     public string ToMarkdown() => writer.Write(document);
