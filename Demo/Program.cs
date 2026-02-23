@@ -8,14 +8,8 @@ namespace Demo
         [STAThread]
         static void Main()
         {
-#if NET48
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new Form1());
-#else
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
-#endif
+            Application.Run(new FormMain());
         }
     }
 }

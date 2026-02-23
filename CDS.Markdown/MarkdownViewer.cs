@@ -34,6 +34,17 @@ public partial class MarkdownViewer : UserControl
     }
 
     /// <summary>
+    /// Renders a Markdown string directly without requiring a file on disk.
+    /// Home navigation is not available when using this method.
+    /// </summary>
+    /// <param name="markdown">The Markdown text to render.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task LoadMarkdownFromStringAsync(string markdown)
+    {
+        await session.LoadMarkdownFromStringAsync(markdown);
+    }
+
+    /// <summary>
     /// Loads and renders a Markdown file asynchronously. Stores the path for 'Home' navigation.
     /// </summary>
     /// <param name="filePath">The path to the Markdown file.</param>

@@ -26,6 +26,18 @@ public class MarkdownDocumentService
     }
 
     /// <summary>
+    /// Renders a Markdown string to HTML and builds the full HTML document.
+    /// </summary>
+    /// <param name="markdown">The Markdown text to render.</param>
+    /// <param name="baseHref">The base href for resolving relative links.</param>
+    /// <returns>The complete HTML document as a string.</returns>
+    public Task<string> BuildHtmlFromMarkdownAsync(string markdown, string baseHref)
+    {
+        var htmlBody = renderer.RenderToHtml(markdown);
+        return Task.FromResult(htmlBuilder.Build(htmlBody, baseHref));
+    }
+
+    /// <summary>
     /// Loads a Markdown file, renders it to HTML, and builds the full HTML document.
     /// </summary>
     /// <param name="filePath">The path to the Markdown file.</param>
@@ -38,12 +50,8 @@ public class MarkdownDocumentService
         {
             throw new FileNotFoundException("Markdown file not found", filePath);
         }
-#if NET48
-        string markdown = File.ReadAllText(filePath);
-        await Task.Yield(); // Simulate async for API consistency
-#else
+
         string markdown = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-#endif
         string htmlBody = renderer.RenderToHtml(markdown);
         return htmlBuilder.Build(htmlBody, baseHref);
     }

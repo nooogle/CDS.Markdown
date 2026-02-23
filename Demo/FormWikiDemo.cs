@@ -4,12 +4,12 @@ namespace Demo;
 /// <summary>
 /// Demo form for displaying Markdown content.
 /// </summary>
-public partial class Form1 : Form
+public partial class FormWikiDemo : Form
 {
     /// <summary>
     /// Initialise
     /// </summary>
-    public Form1()
+    public FormWikiDemo()
     {
         InitializeComponent();
     }

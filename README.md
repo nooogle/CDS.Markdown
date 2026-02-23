@@ -8,14 +8,13 @@ This repository contains:
 - **Demo**: A sample WinForms application demonstrating how to use the CDS.Markdown control to display Markdown files.
 
 **Compatible with:**
-- .NET Framework 4.8
-- .NET 6
 - .NET 8
+- .NET 10
 
 ## Projects Overview
 
 ### CDS.Markdown
-- **Type**: .NET WinForms Class Library (net48, net6.0-windows, net8.0-windows)
+- **Type**: .NET WinForms Class Library (net8.0-windows, net10.0-windows)
 - **Purpose**: Provides a reusable `MarkdownViewer` control for rendering Markdown content in WinForms apps.
 - **Key Features:**
   - Renders Markdown using [Markdig](https://github.com/lunet-io/markdig)
@@ -26,7 +25,7 @@ This repository contains:
 - **NuGet**: Ready for packaging and public release
 
 ### Demo
-- **Type**: .NET WinForms Application (net48, net6.0-windows, net8.0-windows)
+- **Type**: .NET WinForms Application (net8.0-windows, net10.0-windows)
 - **Purpose**: Shows how to use the `MarkdownViewer` control in a real application.
 - **Usage**: Loads and displays Markdown files from the project directory.
 

@@ -59,6 +59,21 @@ public class MarkdownViewerSession
     }
 
     /// <summary>
+    /// Renders a Markdown string and raises HtmlReady when done. No home path is set.
+    /// </summary>
+    /// <param name="markdown">The Markdown text to render.</param>
+    public async Task LoadMarkdownFromStringAsync(string markdown)
+    {
+        currentMarkdownPath = null;
+        currentDirectory = null;
+        var html = await markdownService.BuildHtmlFromMarkdownAsync(markdown, string.Empty);
+        if (HtmlReady != null)
+        {
+            await HtmlReady.Invoke(html);
+        }
+    }
+
+    /// <summary>
     /// Navigates to the home markdown file, if set.
     /// </summary>
     public async Task GoHomeAsync()

@@ -1,6 +1,6 @@
 ﻿namespace Demo
 {
-    partial class Form1
+    partial class FormWikiDemo
     {
         /// <summary>
         ///  Required designer variable.
