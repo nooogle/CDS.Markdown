@@ -3,10 +3,12 @@
     <Company>Carpe Diem Systems</Company>
     <Copyright>Carpe Diem Systems (c) 2025</Copyright>
     <Authors>Jon Shadforth</Authors>
+    <!-- MinVer: use 'v' tag prefix to match existing repo tags (e.g. v1.3.16) -->
+    <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115">
+    <PackageReference Include="MinVer" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -1,7 +1,0 @@
-{
-  "version": "1.3.16",
-  "publicReleaseRefSpec": [ "^refs/heads/master$", "^refs/tags/v\\d+\\.\\d+\\.\\d+$" ],
-  "cloudBuild": {
-    "setVersionVariables": true
-  }
-}
