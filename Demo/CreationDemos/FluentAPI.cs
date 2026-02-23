@@ -42,13 +42,10 @@ public class FluentAPI
             .AddBulletList([
                 ":white_check_mark: Stable fluent API",
                 ":white_check_mark: Targets .NET 8, .NET 10",
-                ":white_check_mark: D2 diagram support",
                 ":construction: Ordered lists — *coming soon*",
                 ":construction: Tables — *coming soon*",
+                ":construction: Mermaid diagram rendering — *coming soon*",
             ])
-            .AddHeading(":bar_chart: D2 Diagram Support", 2)
-            .AddParagraph("D2 fenced blocks are rendered as **inline SVG** at runtime via a local WASM bundle — no internet required.")
-            .AddCodeBlock("A -> B: request\nB -> C: query\nC -> B: result\nB -> A: response", "d2")
             .ToMarkdown();
     }
 }
