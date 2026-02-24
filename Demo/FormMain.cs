@@ -8,27 +8,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Demo
+namespace Demo;
+
+public partial class FormMain : Form
 {
-    public partial class FormMain : Form
+    public FormMain()
     {
-        public FormMain()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            labelInfo.Text = SystemInfoHelper.GetSystemInfo();
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        labelInfo.Text = SystemInfoHelper.GetSystemInfo();
 
-            var menuGroup = menuTree.AddGroup("Wiki");
-            menuGroup.AddDemo("Demo", "", this, () => new FormWikiDemo());
+        var menuGroup = menuTree.API.AddGroup("Wiki");
+        menuGroup.AddItem("Demo", "", this, () => new FormWikiDemo());
 
-            var creationGroup = menuTree.AddGroup("Creation");
-            creationGroup.AddDemo("Fluent API", "", this, () => CreationDemos.FormCreationDemoHost.Run(this, CreationDemos.FluentAPI.Run));
+        var creationGroup = menuTree.AddGroup("Creation");
+        creationGroup.AddItem("Fluent API", "", () => CreationDemos.FormCreationDemoHost.Run(this, CreationDemos.FluentAPI.Run));
 
-            menuTree.ExpandAllGroups();
-        }
+        menuTree.API.ExpandAllGroups();
+        menuTree.API.MouseActivation = CDS.WinFormsMenus.Basic.MouseActivation.SingleClick;
     }
 }
