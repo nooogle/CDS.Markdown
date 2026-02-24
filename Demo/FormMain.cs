@@ -27,6 +27,7 @@ public partial class FormMain : Form
 
         var creationGroup = menuTree.AddGroup("Creation");
         creationGroup.AddItem("Fluent API", "", () => CreationDemos.FormCreationDemoHost.Run(this, CreationDemos.FluentAPI.Run));
+        creationGroup.AddItem("Builder API", "", () => CreationDemos.FormCreationDemoHost.Run(this, CreationDemos.BuilderAPI.Run));
 
         menuTree.API.ExpandAllGroups();
         menuTree.API.MouseActivation = CDS.WinFormsMenus.Basic.MouseActivation.SingleClick;
