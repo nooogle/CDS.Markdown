@@ -15,10 +15,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -26,15 +31,12 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Pack
-        run: dotnet pack CDS.Markdown/CDS.Markdown.csproj --configuration Release --no-build --output ./nupkg
-
-      - name: List nupkg directory
-        run: dir ./nupkg
-
-      - name: List bin/Release directory
-        run: dir CDS.Markdown\\bin\\Release
-
       - name: Test
-        run: dotnet test --configuration Release --no-build --logger trx
+        run: dotnet test --configuration Release --no-build --logger trx --collect:"XPlat Code Coverage"
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: nooogle/CDS.Markdown
 

@@ -1,6 +1,9 @@
 # CDS.MarkDown Solution
 
-![Build & Test](https://github.com/nooogle/CDS.MarkDown/actions/workflows/build-and-test.yml/badge.svg)
+[![Build & Test](https://github.com/nooogle/CDS.Markdown/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/nooogle/CDS.Markdown/actions/workflows/build-and-test.yml)
+[![NuGet](https://img.shields.io/nuget/v/CDS.Markdown.svg)](https://www.nuget.org/packages/CDS.Markdown/)
+[![codecov](https://codecov.io/gh/nooogle/CDS.Markdown/graph/badge.svg?token=YOUR_TOKEN)](https://codecov.io/gh/nooogle/CDS.Markdown)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains:
 
