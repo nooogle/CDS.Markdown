@@ -84,6 +84,21 @@ public class MarkdownDocumentBuilderTests
     }
 
     [TestMethod]
+    public void AddMathBlock_ShouldAddMathBlock()
+    {
+        // Arrange
+        var builder = new MarkdownDocumentBuilder();
+
+        // Act
+        builder.AddMathBlock(@"\frac{n!}{k!(n-k)!} = \binom{n}{k}");
+        var markdown = builder.Build();
+
+        // Assert
+        markdown.Should().Contain("$$");
+        markdown.Should().Contain(@"\frac{n!}{k!(n-k)!} = \binom{n}{k}");
+    }
+
+    [TestMethod]
     public void Build_ShouldBuildCompleteDocument()
     {
         // Arrange

@@ -77,6 +77,9 @@ public class FluentAPI
                     D --> E[Full HTML page\n+ mermaid.js bundle]
                     E --> F([WebView2 renders SVG])
                 """)
+            .AddHeading(":heavy_division_sign: Mathematics Support", 2)
+            .AddParagraph("LaTeX-like math rendering is supported via Markdig's mathematics extension. Note that to render this in the browser, you may need to include a library like KaTeX or MathJax in your HTML template.")
+            .AddMathBlock(@"\frac{n!}{k!(n-k)!} = \binom{n}{k}")
             .ToMarkdown();
     }
 }

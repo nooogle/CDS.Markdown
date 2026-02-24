@@ -57,6 +57,12 @@ public class MarkdownDocumentBuilder
     public void AddImage(string altText, string path) => document.Add(new MarkdownDocumentCore.Image(altText, path));
 
     /// <summary>
+    /// Adds a block of LaTeX-like mathematics to the document.
+    /// </summary>
+    /// <param name="math">The mathematical expression.</param>
+    public void AddMathBlock(string math) => document.Add(new MathBlock(math));
+
+    /// <summary>
     /// Renders the document and returns the complete Markdown string.
     /// </summary>
     public string Build() => writer.Write(document);

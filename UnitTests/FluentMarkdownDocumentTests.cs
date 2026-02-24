@@ -106,6 +106,22 @@ public class FluentMarkdownDocumentTests
     }
 
     [TestMethod]
+    public void AddMathBlock_ShouldAddMathBlock()
+    {
+        // Arrange
+        var document = new FluentMarkdownDocument();
+
+        // Act
+        var markdown = document
+            .AddMathBlock(@"\frac{n!}{k!(n-k)!} = \binom{n}{k}")
+            .ToMarkdown();
+
+        // Assert
+        markdown.Should().Contain("$$");
+        markdown.Should().Contain(@"\frac{n!}{k!(n-k)!} = \binom{n}{k}");
+    }
+
+    [TestMethod]
     public void Chaining_ShouldBuildCompleteDocument()
     {
         // Arrange

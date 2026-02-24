@@ -86,7 +86,11 @@ public class BuilderAPI
                 D --> E[Full HTML page\n+ mermaid.js bundle]
                 E --> F([WebView2 renders SVG])
             """, "mermaid");
-            
+
+        builder.AddHeading(":heavy_division_sign: Mathematics Support", 2);
+        builder.AddParagraph("LaTeX-like math rendering is supported via Markdig's mathematics extension. Note that to render this in the browser, you may need to include a library like KaTeX or MathJax in your HTML template.");
+        builder.AddMathBlock(@"\frac{n!}{k!(n-k)!} = \binom{n}{k}");
+
         return builder.Build();
     }
 }

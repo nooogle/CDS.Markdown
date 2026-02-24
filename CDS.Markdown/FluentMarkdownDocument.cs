@@ -85,6 +85,16 @@ public class FluentMarkdownDocument
         AddCodeBlock(diagramDefinition, "mermaid");
 
     /// <summary>
+    /// Adds a block of LaTeX-like mathematics to the document.
+    /// </summary>
+    /// <param name="math">The mathematical expression.</param>
+    public FluentMarkdownDocument AddMathBlock(string math)
+    {
+        document.Add(new MathBlock(math));
+        return this;
+    }
+
+    /// <summary>
     /// Renders the document and returns the complete Markdown string.
     /// </summary>
     public string ToMarkdown() => writer.Write(document);

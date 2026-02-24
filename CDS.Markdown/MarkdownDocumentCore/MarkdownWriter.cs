@@ -35,6 +35,9 @@ public class MarkdownWriter
                 case Image image:
                     WriteImage(sb, image);
                     break;
+                case MathBlock mathBlock:
+                    WriteMathBlock(sb, mathBlock);
+                    break;
             }
         }
 
@@ -88,6 +91,14 @@ public class MarkdownWriter
         sb.Append("](");
         sb.Append(image.Path);
         sb.AppendLine(")");
+        sb.AppendLine();
+    }
+
+    private static void WriteMathBlock(StringBuilder sb, MathBlock mathBlock)
+    {
+        sb.AppendLine("$$");
+        sb.AppendLine(mathBlock.Math);
+        sb.AppendLine("$$");
         sb.AppendLine();
     }
 }
