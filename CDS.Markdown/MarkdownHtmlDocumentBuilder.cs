@@ -28,6 +28,18 @@ public class MarkdownHtmlDocumentBuilder
     private readonly string? mermaidInitScript;
 
     /// <summary>
+    /// The minified MathJax bundle to inline, or <c>null</c> if math
+    /// rendering is not required.
+    /// </summary>
+    private readonly string? mathJaxBundle;
+
+    /// <summary>
+    /// The MathJax initialisation script that configures MathJax to render
+    /// Markdig's math blocks, or <c>null</c> when MathJax is not included.
+    /// </summary>
+    private readonly string? mathJaxInitScript;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MarkdownHtmlDocumentBuilder"/> class.
     /// </summary>
     /// <param name="githubCss">The GitHub Markdown CSS to embed.</param>
@@ -41,18 +53,30 @@ public class MarkdownHtmlDocumentBuilder
     /// The initialisation script that wires Mermaid to the rendered HTML.
     /// Required when <paramref name="mermaidBundle"/> is supplied.
     /// </param>
+    /// <param name="mathJaxBundle">
+    /// The minified MathJax source to inline. When provided, math blocks
+    /// are rendered as SVG. Pass <c>null</c> to omit.
+    /// </param>
+    /// <param name="mathJaxInitScript">
+    /// The initialisation script that configures MathJax.
+    /// Required when <paramref name="mathJaxBundle"/> is supplied.
+    /// </param>
     public MarkdownHtmlDocumentBuilder(
         string githubCss,
         string defaultCss,
         string linkInterceptScript,
         string? mermaidBundle = null,
-        string? mermaidInitScript = null)
+        string? mermaidInitScript = null,
+        string? mathJaxBundle = null,
+        string? mathJaxInitScript = null)
     {
         this.githubCss = githubCss;
         this.defaultCss = defaultCss;
         this.linkInterceptScript = linkInterceptScript;
         this.mermaidBundle = mermaidBundle;
         this.mermaidInitScript = mermaidInitScript;
+        this.mathJaxBundle = mathJaxBundle;
+        this.mathJaxInitScript = mathJaxInitScript;
     }
 
     /// <summary>
@@ -67,6 +91,10 @@ public class MarkdownHtmlDocumentBuilder
             ? $"  <script>{mermaidBundle}</script>\n  {mermaidInitScript}\n"
             : string.Empty;
 
+        var mathJaxScripts = mathJaxBundle is not null
+            ? $"  {mathJaxInitScript}\n  <script>{mathJaxBundle}</script>\n"
+            : string.Empty;
+
         return $"<!DOCTYPE html>\n" +
                "<html>\n" +
                "<head>\n" +
@@ -78,6 +106,7 @@ public class MarkdownHtmlDocumentBuilder
                "  </style>\n" +
                $"  {linkInterceptScript}\n" +
                mermaidScripts +
+               mathJaxScripts +
                "</head>\n" +
                "<body>\n" +
                "<div class=\"markdown-body\">\n" +

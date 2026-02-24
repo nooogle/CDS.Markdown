@@ -18,13 +18,16 @@ public class MarkdownDocumentService
     {
         githubCss = LoadGithubMarkdownCss();
         var mermaidBundle = LoadEmbeddedResource("CDS.Markdown.Resources.mermaid.min.js");
+        var mathJaxBundle = LoadEmbeddedResource("CDS.Markdown.Resources.tex-svg.js");
         renderer = new MarkdownRenderer();
         htmlBuilder = new MarkdownHtmlDocumentBuilder(
             githubCss,
             MarkdownViewerResources.DefaultCss,
             MarkdownViewerResources.LinkInterceptScript,
             mermaidBundle,
-            MarkdownViewerResources.MermaidInitScript
+            MarkdownViewerResources.MermaidInitScript,
+            mathJaxBundle,
+            MarkdownViewerResources.MathJaxInitScript
         );
     }
 

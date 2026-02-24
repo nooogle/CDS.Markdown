@@ -1,30 +1,47 @@
 # CDS.Markdown
 
-A simple .NET WinForms control for rendering Markdown using Markdig and WebView2.
+A comprehensive .NET library for rendering and generating Markdown in WinForms applications.
 
 **Compatible with:**
 - .NET 8
 - .NET 10
 
 ## Features
-- Render Markdown files in your WinForms app
-- Uses [Markdig](https://github.com/lunet-io/markdig) for Markdown parsing
-- Uses [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) for HTML rendering
-- Supports advanced Markdown extensions
+- **WinForms Viewer Control**: Render Markdown files using [Markdig](https://github.com/lunet-io/markdig) and [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/).
+- **Programmatic Creation**: Generate Markdown dynamically using a clean **Fluent API** or a traditional **Builder API**.
+- **Offline-First**: Embedded resources for GitHub-style CSS, Mermaid.js diagrams, and MathJax (LaTeX math) mean no internet connection is required.
 
 ## Getting Started
-1. Install the NuGet package:
-   ```shell
-   dotnet add package CDS.Markdown
-   ```
-2. Add the `MarkdownViewer` control to your form:
-   ```csharp
-   using CDS.Markdown;
-   // ...
-   var viewer = new MarkdownViewer();
-   viewer.LoadMarkdown("README.md");
-   this.Controls.Add(viewer);
-   ```
+
+### 1. Install the NuGet package:
+```shell
+dotnet add package CDS.Markdown
+```
+
+### 2. Viewing Markdown
+Add the `MarkdownViewer` control to your form:
+```csharp
+using CDS.Markdown;
+// ...
+var viewer = new MarkdownViewer();
+await viewer.LoadMarkdownAsync("README.md");
+this.Controls.Add(viewer);
+```
+
+### 3. Generating Markdown
+Create structured Markdown programmatically:
+```csharp
+using CDS.Markdown;
+
+var markdown = new FluentMarkdownDocument()
+    .AddHeading("Hello, World!")
+    .AddParagraph("This is a **bold** statement.")
+    .AddBulletList(["First item", "Second item"])
+    .ToMarkdown();
+```
+
+## Documentation
+For full documentation, including advanced rendering features and the Builder API, please visit the [GitHub Repository](https://github.com/nooogle/CDS.Markdown).
 
 ## License
 MIT
@@ -34,7 +51,6 @@ Pull requests are welcome!
 
 ## Repository
 https://github.com/nooogle/CDS.Markdown
-
 
 ## Attributions
 <a href="https://www.flaticon.com/free-icons/markdown" title="markdown icons">Markdown icons created by brajaomar_j - Flaticon</a>

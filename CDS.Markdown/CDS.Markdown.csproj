@@ -52,6 +52,7 @@
   <ItemGroup>
     <None Remove="Resources\github-markdown.css" />
     <None Remove="Resources\mermaid.min.js" />
+    <None Remove="Resources\tex-svg.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,6 +60,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\mermaid.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\tex-svg.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

@@ -1,96 +1,64 @@
-# CDS.MarkDown Solution
+# CDS.Markdown Solution
 
 [![Build & Test](https://github.com/nooogle/CDS.Markdown/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/nooogle/CDS.Markdown/actions/workflows/build-and-test.yml)
 [![NuGet](https://img.shields.io/nuget/v/CDS.Markdown.svg)](https://www.nuget.org/packages/CDS.Markdown/)
 [![codecov](https://codecov.io/gh/nooogle/CDS.Markdown/graph/badge.svg?token=YOUR_TOKEN)](https://codecov.io/gh/nooogle/CDS.Markdown)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains:
+**CDS.Markdown** is a comprehensive .NET library for both **rendering** and **generating** Markdown. It is designed for easy integration into your .NET 8 and .NET 10 applications.
 
-- **CDS.Markdown**: A .NET WinForms control for rendering Markdown using Markdig and WebView2. Designed for easy integration into your own WinForms applications.
-- **Demo**: A sample WinForms application demonstrating how to use the CDS.Markdown control to display Markdown files.
+## Features
 
-**Compatible with:**
-- .NET 8
-- .NET 10
+- 🖥️ **WinForms Viewer Control**: A drop-in `MarkdownViewer` control powered by [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) and [Markdig](https://github.com/lunet-io/markdig).
+- 📝 **Programmatic Creation**: Generate Markdown dynamically using a clean **Fluent API** or a traditional **Builder API**.
+- 🔌 **Offline-First**: Embedded resources for GitHub-style CSS, Mermaid.js diagrams, and MathJax (LaTeX math) mean **no internet connection is required** to render advanced Markdown.
+- 🧪 **Fully Tested**: Comprehensive unit test coverage ensuring reliable HTML generation and Markdown building.
 
-## Projects Overview
+## Quick Start
 
-### CDS.Markdown
-- **Type**: .NET WinForms Class Library (net8.0-windows, net10.0-windows)
-- **Purpose**: Provides a reusable `MarkdownViewer` control for rendering Markdown content in WinForms apps.
-- **Key Features:**
-  - Renders Markdown using [Markdig](https://github.com/lunet-io/markdig)
-  - Displays HTML via [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/)
-  - Supports advanced Markdown extensions
-  - Uses embedded [GitHub Markdown CSS](https://github.com/sindresorhus/github-markdown-css) for GitHub-style rendering
-  - Easy to use: just add the control and call `LoadMarkdown()`
-- **NuGet**: Ready for packaging and public release
-
-### Demo
-- **Type**: .NET WinForms Application (net8.0-windows, net10.0-windows)
-- **Purpose**: Shows how to use the `MarkdownViewer` control in a real application.
-- **Usage**: Loads and displays Markdown files from the project directory.
-
-
-> Click here to view the demo wiki pages: [CDS.Markdown Demo Wiki](Demo/wiki/index.md)
-
-## How to Use CDS.Markdown
-
-1. Use the Nuget package manager to install the `CDS.Markdown` package 
-   in your WinForms project.
-2. Add a `MarkdownViewer` control to your form.
-
-![Toolbox](readme_images/toolbox.png){width=300px}
-
-3. Create a Markdown file in your project directory, for example `readme.md`.
-
-![Sln Exp Readme](readme_images/sln_exp_readme.png){width=300px}
-
-4. Set the Markdown file's Copy to Output Directory to `Copy if newer`.
-
-![Readme Props](readme_images/readme_props.png){width=300px}
-
-![Form](readme_images/form.png){width=400px}
-
-5. In your form's code, call the `LoadMarkdown()` method on the 
-   `MarkdownViewer` control, passing the path to your Markdown file:
-   ```csharp
-    protected async override void OnShown(EventArgs e)
-    {
-        base.OnShown(e);
-        await markdownViewer1.LoadMarkdownAsync("readme.md");
-    }
-   ```
-
-> Tip 1: the viewer expects the any Markdown files to be in the same directory 
-as the executable, or a subdirectory of it. See the `Demo` project for an example
-of using subdirectories.
-
-> Tip 2: the project uses the WebView2 control which causes compile time
-warnings around version conflicts with the WindowsBase assembly. The
-following property can be added to the project file to suppress these warnings:
-```xml
-<PropertyGroup>
-    <NoWarn>$(NoWarn);MSB3277</NoWarn>
-</PropertyGroup>
+### 1. Installation
+Install the package via NuGet:
+```bash
+dotnet add package CDS.Markdown
 ```
 
+### 2. Viewing Markdown (WinForms)
+Drop the `MarkdownViewer` control onto your form and load a file:
+```csharp
+await markdownViewer1.LoadMarkdownAsync("readme.md");
+```
+👉 [Read the full Viewer Documentation](docs/viewer.md)
 
+### 3. Generating Markdown (Fluent API)
+Create structured Markdown programmatically without string wrangling:
+```csharp
+var markdown = new FluentMarkdownDocument()
+    .AddHeading("Hello, World!")
+    .AddParagraph("This is a **bold** statement.")
+    .AddBulletList(["First item", "Second item"])
+    .AddMermaidDiagram("graph TD;\nA-->B;")
+    .ToMarkdown();
+```
+👉 [Read the full Creation Documentation](docs/creation.md)
 
-## GitHub Markdown CSS
+## Project Structure
 
-This project embeds [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) as an embedded resource to provide GitHub-style Markdown rendering.  
-The CSS is included in the assembly, so no additional files or downloads are required when consuming the package.
+- **`CDS.Markdown`**: The core library containing the viewer control, HTML builder, and Markdown generation APIs.
+- **`Demo`**: A sample WinForms application demonstrating both the viewer and the creation APIs.
+- **`UnitTests`**: MSTest project covering HTML rendering, session management, and Markdown generation.
+
+## Documentation
+
+- [Markdown Viewer Guide](docs/viewer.md)
+- [Markdown Creation Guide](docs/creation.md)
+- [Demo Wiki](Demo/wiki/index.md)
 
 ## How this was written!
-I couldn't find an existing WinForms Markdown control that met my needs, 
-so I reviewed the requirements with ChatGPT and used it to create a detailed 
-prompt for Copilot Agent mode. This helps created the initial code, including
-HTML, scripts and CSS. Nearly every other change was also done via prompts,
-a process I'm calling `flow coding` :smile: It's like Vibe Coding, but 
-with a more human interaction and many files and projects!
+I couldn't find an existing WinForms Markdown control that met my needs, so I reviewed the requirements with ChatGPT and used it to create a detailed prompt for Copilot Agent mode. This helped create the initial code, including HTML, scripts, and CSS. Nearly every other change was also done via prompts, a process I'm calling `flow coding` 😄 It's like Vibe Coding, but with more human interaction across many files and projects!
 
 ## Attributions
 
-The [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) is licensed under the MIT License:
+- [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) (MIT License)
+- [Markdig](https://github.com/lunet-io/markdig) (BSD-2-Clause)
+- [Mermaid.js](https://mermaid.js.org/) (MIT License)
+- [MathJax](https://www.mathjax.org/) (Apache-2.0)

@@ -70,14 +70,14 @@ public class MarkdownViewerSessionTests
         var markdown = "# Link Test";
         await TestFileHelper.WriteAllTextAsync(tempFilePath!, markdown);
         await session!.NavigateToAsync(tempFilePath!, setHome: true);
-        var linkedFile = Path.Combine(Path.GetDirectoryName(tempFilePath!)!, "linked.md");
+        var linkedFile = Path.Combine(Path.GetDirectoryName(tempFilePath!)!, Guid.NewGuid().ToString() + ".md");
         await TestFileHelper.WriteAllTextAsync(linkedFile, "# Linked");
         lastHtml = null;
 
         try
         {
             // Act
-            await session.HandleMarkdownLinkAsync("linked.md");
+            await session.HandleMarkdownLinkAsync(Path.GetFileName(linkedFile));
 
             // Assert
             session.CurrentMarkdownPath.Should().Be(linkedFile);
@@ -96,7 +96,7 @@ public class MarkdownViewerSessionTests
         var markdown = "# Nav Test";
         await TestFileHelper.WriteAllTextAsync(tempFilePath!, markdown);
         await session!.NavigateToAsync(tempFilePath!, setHome: true);
-        var linkedFile = Path.Combine(Path.GetDirectoryName(tempFilePath!)!, "nav.md");
+        var linkedFile = Path.Combine(Path.GetDirectoryName(tempFilePath!)!, Guid.NewGuid().ToString() + ".md");
         await TestFileHelper.WriteAllTextAsync(linkedFile, "# NavLinked");
         lastHtml = null;
         bool cancelled = false;

@@ -44,4 +44,20 @@ public class MarkdownHtmlDocumentBuilderTests
         html.Should().Contain(baseHref)
             .And.Contain("<div class=\"markdown-body\">");
     }
+
+    [TestMethod]
+    public void Build_ShouldIncludeMathJaxWhenProvided()
+    {
+        // Arrange
+        var mathJaxBundle = "console.log('mathjax');";
+        var mathJaxInit = "<script>initMathJax();</script>";
+        var builder = new MarkdownHtmlDocumentBuilder("", "", "", null, null, mathJaxBundle, mathJaxInit);
+
+        // Act
+        var html = builder.Build("body", "<base href=\"/\">");
+
+        // Assert
+        html.Should().Contain(mathJaxBundle)
+            .And.Contain(mathJaxInit);
+    }
 }

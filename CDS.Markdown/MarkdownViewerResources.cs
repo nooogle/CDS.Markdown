@@ -70,4 +70,23 @@ document.addEventListener('DOMContentLoaded', function () {
     mermaid.run();
 });
 </script>";
+
+    /// <summary>
+    /// The script that configures MathJax before it is loaded.
+    /// Tells MathJax to process elements with the 'math' class, which is what Markdig outputs.
+    /// </summary>
+    public static string MathJaxInitScript => @"<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    ignoreHtmlClass: '.*',
+    processHtmlClass: 'math'
+  }
+};
+</script>";
 }
