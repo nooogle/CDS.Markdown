@@ -36,11 +36,12 @@ public class MarkdownDocumentService
     /// </summary>
     /// <param name="markdown">The Markdown text to render.</param>
     /// <param name="baseHref">The base href for resolving relative links.</param>
+    /// <param name="theme">The theme to use.</param>
     /// <returns>The complete HTML document as a string.</returns>
-    public Task<string> BuildHtmlFromMarkdownAsync(string markdown, string baseHref)
+    public Task<string> BuildHtmlFromMarkdownAsync(string markdown, string baseHref, MarkdownViewerTheme theme = MarkdownViewerTheme.System)
     {
         var htmlBody = renderer.RenderToHtml(markdown);
-        return Task.FromResult(htmlBuilder.Build(htmlBody, baseHref));
+        return Task.FromResult(htmlBuilder.Build(htmlBody, baseHref, theme));
     }
 
     /// <summary>
@@ -48,9 +49,10 @@ public class MarkdownDocumentService
     /// </summary>
     /// <param name="filePath">The path to the Markdown file.</param>
     /// <param name="baseHref">The base href for resolving relative links.</param>
+    /// <param name="theme">The theme to use.</param>
     /// <returns>The complete HTML document as a string.</returns>
     /// <exception cref="FileNotFoundException">Thrown if the file does not exist.</exception>
-    public async Task<string> BuildHtmlFromMarkdownFileAsync(string filePath, string baseHref)
+    public async Task<string> BuildHtmlFromMarkdownFileAsync(string filePath, string baseHref, MarkdownViewerTheme theme = MarkdownViewerTheme.System)
     {
         if (!File.Exists(filePath))
         {
@@ -59,7 +61,7 @@ public class MarkdownDocumentService
 
         string markdown = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
         string htmlBody = renderer.RenderToHtml(markdown);
-        return htmlBuilder.Build(htmlBody, baseHref);
+        return htmlBuilder.Build(htmlBody, baseHref, theme);
     }
 
     /// <summary>

@@ -43,6 +43,9 @@ protected async override void OnShown(EventArgs e)
 ## Advanced Rendering
 
 The viewer automatically supports:
-- **GitHub Flavored Markdown**: Styled using embedded `github-markdown-css`.
+- **GitHub Flavored Markdown**: Styled using embedded `github-markdown-css`. 
+Support for Dark, Light, and System themes by setting 
+`markdownViewer.Options.Theme` to `MarkdownViewerTheme.Dark`, 
+`MarkdownViewerTheme.Light`, or `MarkdownViewerTheme.System`.
 - **Mermaid Diagrams**: Rendered offline using an embedded `mermaid.min.js`.
 - **Mathematics**: LaTeX-style math blocks (`$$`) rendered offline using an embedded MathJax SVG engine.

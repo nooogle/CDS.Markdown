@@ -16,6 +16,11 @@ public class MarkdownViewerSession
     public event Func<string, Task>? HtmlReady;
 
     /// <summary>
+    /// Gets or sets the theme to use when building the HTML.
+    /// </summary>
+    public MarkdownViewerTheme Theme { get; set; } = MarkdownViewerTheme.System;
+
+    /// <summary>
     /// Gets the current directory for resolving relative links.
     /// </summary>
     public string? CurrentDirectory => currentDirectory;
@@ -51,7 +56,7 @@ public class MarkdownViewerSession
             homeMarkdownPath = filePath;
         }
         var baseHref = $"<base href=\"file:///{currentDirectory!.Replace("\\", "/")}/\">";
-        string html = await markdownService.BuildHtmlFromMarkdownFileAsync(filePath, baseHref);
+        string html = await markdownService.BuildHtmlFromMarkdownFileAsync(filePath, baseHref, Theme);
         if (HtmlReady != null)
         {
             await HtmlReady.Invoke(html);
@@ -66,7 +71,7 @@ public class MarkdownViewerSession
     {
         currentMarkdownPath = null;
         currentDirectory = null;
-        var html = await markdownService.BuildHtmlFromMarkdownAsync(markdown, string.Empty);
+        var html = await markdownService.BuildHtmlFromMarkdownAsync(markdown, string.Empty, Theme);
         if (HtmlReady != null)
         {
             await HtmlReady.Invoke(html);

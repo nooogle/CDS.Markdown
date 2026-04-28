@@ -41,6 +41,8 @@ public partial class MarkdownViewer : UserControl
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task LoadMarkdownFromStringAsync(string markdown)
     {
+        ApplyThemeToWebView();
+        session.Theme = Options.Theme;
         await session.LoadMarkdownFromStringAsync(markdown);
     }
 
@@ -52,6 +54,8 @@ public partial class MarkdownViewer : UserControl
     /// <exception cref="FileNotFoundException">Thrown if the file does not exist.</exception>
     public async Task LoadMarkdownAsync(string filePath)
     {
+        ApplyThemeToWebView();
+        session.Theme = Options.Theme;
         await session.NavigateToAsync(filePath, setHome: true);
     }
 
@@ -112,11 +116,28 @@ public partial class MarkdownViewer : UserControl
             }
 
             AttachWebView2EventHandlers();
+            ApplyThemeToWebView();
         }
         finally
         {
             initGate.Release();
         }
+    }
+
+    /// <summary>
+    /// Applies the selected theme to the WebView2 profile.
+    /// </summary>
+    private void ApplyThemeToWebView()
+    {
+        if (webView.CoreWebView2?.Profile == null)
+            return;
+
+        webView.CoreWebView2.Profile.PreferredColorScheme = Options.Theme switch
+        {
+            MarkdownViewerTheme.Light => CoreWebView2PreferredColorScheme.Light,
+            MarkdownViewerTheme.Dark => CoreWebView2PreferredColorScheme.Dark,
+            _ => CoreWebView2PreferredColorScheme.Auto
+        };
     }
 
     /// <summary>

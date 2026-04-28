@@ -23,4 +23,10 @@ public sealed class MarkdownViewerOptions
     /// This is used if a custom browser location is required.
     /// </summary>
     public string? BrowserExecutableFolder { get; set; }
+
+    /// <summary>
+    /// Gets or sets the theme used for rendering.
+    /// Defaults to System.
+    /// </summary>
+    public MarkdownViewerTheme Theme { get; set; } = MarkdownViewerTheme.System;
 }

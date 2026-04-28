@@ -84,8 +84,9 @@ public class MarkdownHtmlDocumentBuilder
     /// </summary>
     /// <param name="htmlBody">The HTML body content (rendered from Markdown).</param>
     /// <param name="baseHref">The base href for resolving relative links.</param>
+    /// <param name="theme">The theme to apply to the document.</param>
     /// <returns>The complete HTML document as a string.</returns>
-    public string Build(string htmlBody, string baseHref)
+    public string Build(string htmlBody, string baseHref, MarkdownViewerTheme theme = MarkdownViewerTheme.System)
     {
         var mermaidScripts = mermaidBundle is not null
             ? $"  <script>{mermaidBundle}</script>\n  {mermaidInitScript}\n"
@@ -94,6 +95,13 @@ public class MarkdownHtmlDocumentBuilder
         var mathJaxScripts = mathJaxBundle is not null
             ? $"  {mathJaxInitScript}\n  <script>{mathJaxBundle}</script>\n"
             : string.Empty;
+
+        var themeAttribute = theme switch
+        {
+            MarkdownViewerTheme.Light => " data-theme=\"light\"",
+            MarkdownViewerTheme.Dark => " data-theme=\"dark\"",
+            _ => string.Empty
+        };
 
         return $"<!DOCTYPE html>\n" +
                "<html>\n" +
@@ -108,7 +116,7 @@ public class MarkdownHtmlDocumentBuilder
                mermaidScripts +
                mathJaxScripts +
                "</head>\n" +
-               "<body>\n" +
+               $"<body{themeAttribute}>\n" +
                "<div class=\"markdown-body\">\n" +
                $"{htmlBody}\n" +
                "</div>\n" +

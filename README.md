@@ -9,7 +9,7 @@
 
 ## Features
 
-- 🖥️ **WinForms Viewer Control**: A drop-in `MarkdownViewer` control powered by [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) and [Markdig](https://github.com/lunet-io/markdig).
+- 🖥️ **WinForms Viewer Control**: A drop-in `MarkdownViewer` control powered by [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) and [Markdig](https://github.com/lunet-io/markdig). Includes Light and Dark mode theme support.
 - 📝 **Programmatic Creation**: Generate Markdown dynamically using a clean **Fluent API** or a traditional **Builder API**.
 - 🔌 **Offline-First**: Embedded resources for GitHub-style CSS, Mermaid.js diagrams, and MathJax (LaTeX math) mean **no internet connection is required** to render advanced Markdown.
 - 🧪 **Fully Tested**: Comprehensive unit test coverage ensuring reliable HTML generation and Markdown building.
@@ -52,9 +52,6 @@ var markdown = new FluentMarkdownDocument()
 - [Markdown Viewer Guide](docs/viewer.md)
 - [Markdown Creation Guide](docs/creation.md)
 - [Demo Wiki](Demo/wiki/index.md)
-
-## How this was written!
-I couldn't find an existing WinForms Markdown control that met my needs, so I reviewed the requirements with ChatGPT and used it to create a detailed prompt for Copilot Agent mode. This helped create the initial code, including HTML, scripts, and CSS. Nearly every other change was also done via prompts, a process I'm calling `flow coding` 😄 It's like Vibe Coding, but with more human interaction across many files and projects!
 
 ## Attributions
 
