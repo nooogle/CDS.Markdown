@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'V*.*.*' # Triggers on version tags like V1.2.3
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: write
+      attestations: write
+
+    environment: nuget
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '8.x'
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack CDS.Markdown/CDS.Markdown.csproj --configuration Release --no-build --output ./nupkg
+
+      - name: Generate SBOM
+        run: |
+          dotnet tool install --global CycloneDX
+          # IncludeSymbols=true with no SymbolPackageFormat produces a legacy
+          # *.symbols.nupkg alongside the real package — that also matches a
+          # *.nupkg wildcard, so exclude it explicitly rather than assuming
+          # exactly one file matches.
+          $pkg = Get-ChildItem -Path ./nupkg -Filter "CDS.Markdown.*.nupkg" | Where-Object { $_.Name -notlike "*.symbols.nupkg" }
+          $version = $pkg.BaseName.Substring("CDS.Markdown".Length + 1)
+          dotnet-CycloneDX CDS.Markdown/CDS.Markdown.csproj -o ./nupkg -F json -sv $version
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            ./nupkg/*.nupkg
+            !./nupkg/*.symbols.nupkg
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@v4
+        with:
+          subject-path: |
+            ./nupkg/*.nupkg
+            !./nupkg/*.symbols.nupkg
+          sbom-path: ./nupkg/bom.json
+
+      - name: Authenticate with NuGet (Trusted Publishing)
+        uses: NuGet/login@v1
+        id: nuget-auth
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet
+        shell: pwsh
+        run: |
+          # Excludes *.symbols.nupkg (legacy symbol package format) — pushing it
+          # through the same path as the real package is not what nuget.org's
+          # main index expects; this bug was already live before this change.
+          Get-ChildItem -Path ./nupkg -Filter *.nupkg | Where-Object { $_.Name -notlike "*.symbols.nupkg" } | ForEach-Object {
+            dotnet nuget push $_.FullName --api-key ${{ steps.nuget-auth.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            ./nupkg/*.nupkg
+            ./nupkg/bom.json
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
