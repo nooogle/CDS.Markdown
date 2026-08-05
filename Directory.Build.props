@@ -3,8 +3,8 @@
     <Company>Carpe Diem Systems</Company>
     <Copyright>Carpe Diem Systems (c) 2025</Copyright>
     <Authors>Jon Shadforth</Authors>
-    <!-- MinVer: use 'v' tag prefix to match existing repo tags (e.g. v1.3.16) -->
-    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <!-- MinVer: uppercase 'V' tag prefix, matching the fleet-wide convention -->
+    <MinVerTagPrefix>V</MinVerTagPrefix>
   </PropertyGroup>
 
   <ItemGroup>
