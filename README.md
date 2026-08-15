@@ -1,9 +1,10 @@
 # CDS.Markdown Solution
 
-[![Build & Test](https://github.com/nooogle/CDS.Markdown/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/nooogle/CDS.Markdown/actions/workflows/build-and-test.yml)
+[![CI](https://github.com/nooogle/CDS.Markdown/actions/workflows/ci.yml/badge.svg)](https://github.com/nooogle/CDS.Markdown/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/nooogle/CDS.Markdown/actions/workflows/codeql.yml/badge.svg)](https://github.com/nooogle/CDS.Markdown/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/nooogle/CDS.Markdown/badge)](https://securityscorecards.dev/viewer/?uri=github.com/nooogle/CDS.Markdown)
 [![NuGet](https://img.shields.io/nuget/v/CDS.Markdown.svg)](https://www.nuget.org/packages/CDS.Markdown/)
-[![codecov](https://codecov.io/gh/nooogle/CDS.Markdown/graph/badge.svg?token=YOUR_TOKEN)](https://codecov.io/gh/nooogle/CDS.Markdown)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/github/license/nooogle/CDS.Markdown)](LICENSE.txt)
 
 **CDS.Markdown** is a comprehensive .NET library for both **rendering** and **generating** Markdown. It is designed for easy integration into your .NET 8 and .NET 10 applications.
 
