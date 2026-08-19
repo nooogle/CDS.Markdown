@@ -29,4 +29,12 @@ public sealed class MarkdownViewerOptions
     /// Defaults to System.
     /// </summary>
     public MarkdownViewerTheme Theme { get; set; } = MarkdownViewerTheme.System;
+
+    /// <summary>
+    /// Gets or sets whether the Home/Back/Forward navigation toolbar is shown above the
+    /// rendered content. Defaults to <c>true</c>, matching the viewer's original behaviour.
+    /// Set to <c>false</c> when embedding the viewer as a fragment inside a larger UI (e.g. a
+    /// chat message bubble) that has no "home" document and nowhere to navigate to/from.
+    /// </summary>
+    public bool ShowNavigationToolbar { get; set; } = true;
 }

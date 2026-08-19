@@ -35,6 +35,8 @@ public static class MarkdownViewerResources
     /// - Listens for click events on anchor tags.
     /// - If the link points to a .md file, prevents default navigation and sends the href to the host app via WebView2 messaging.
     /// This allows seamless in-app navigation between Markdown files.
+    /// Messages are posted as <c>{ type: 'linkClick', href }</c> so the host can tell them
+    /// apart from other message types (e.g. <see cref="ContentHeightScript"/>) on the same channel.
     /// </summary>
     public static string LinkInterceptScript => @"<script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -45,10 +47,32 @@ document.addEventListener('DOMContentLoaded', function() {
       let href = t.getAttribute('href');
       if (href && href.match(/\\.md($|[#?])/i)) {
         e.preventDefault();
-        window.chrome.webview.postMessage(href);
+        window.chrome.webview.postMessage({ type: 'linkClick', href: href });
       }
     }
   }, true);
+});
+</script>";
+
+    /// <summary>
+    /// The script that reports the rendered content height back to the host, both once
+    /// after initial load and again whenever it changes afterwards (web fonts finishing,
+    /// Mermaid diagrams or MathJax reflowing content, etc.). Uses a <c>ResizeObserver</c>
+    /// on <c>document.body</c> rather than a one-shot read after navigation, since content
+    /// height can keep changing well after the initial paint.
+    /// Messages are posted as <c>{ type: 'contentHeight', height }</c>.
+    /// </summary>
+    public static string ContentHeightScript => @"<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function postHeight() {
+    window.chrome.webview.postMessage({ type: 'contentHeight', height: Math.ceil(document.body.scrollHeight) });
+  }
+  postHeight();
+  if (window.ResizeObserver) {
+    new ResizeObserver(postHeight).observe(document.body);
+  } else {
+    window.addEventListener('resize', postHeight);
+  }
 });
 </script>";
 

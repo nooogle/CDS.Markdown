@@ -27,7 +27,8 @@ public class MarkdownDocumentService
             mermaidBundle,
             MarkdownViewerResources.MermaidInitScript,
             mathJaxBundle,
-            MarkdownViewerResources.MathJaxInitScript
+            MarkdownViewerResources.MathJaxInitScript,
+            MarkdownViewerResources.ContentHeightScript
         );
     }
 

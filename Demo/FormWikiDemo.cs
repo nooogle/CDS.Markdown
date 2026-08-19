@@ -7,11 +7,26 @@ namespace Demo;
 public partial class FormWikiDemo : Form
 {
     /// <summary>
-    /// Initialise
+    /// Initialise, with the navigation toolbar shown.
     /// </summary>
-    public FormWikiDemo()
+    public FormWikiDemo() : this(showNavigationToolbar: true)
+    {
+    }
+
+    /// <summary>
+    /// Initialise.
+    /// </summary>
+    /// <param name="showNavigationToolbar">
+    /// Whether the Home/Back/Forward toolbar is shown. Exposed here so UI-automation
+    /// tests (see UiTests) can drive both states of <see cref="CDS.Markdown.MarkdownViewerOptions.ShowNavigationToolbar"/>
+    /// via <c>Demo/Program.cs</c> command-line arguments without needing a UI to toggle it.
+    /// </param>
+    public FormWikiDemo(bool showNavigationToolbar)
     {
         InitializeComponent();
+        markdownViewer.Options.ShowNavigationToolbar = showNavigationToolbar;
+        markdownViewer.ContentHeightChanged += (_, height) =>
+            labelContentHeight.Text = $"Content height: {height}px";
     }
 
     /// <summary>

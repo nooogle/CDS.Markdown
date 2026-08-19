@@ -45,6 +45,25 @@ public class MarkdownDocumentServiceTests
     }
 
     [TestMethod]
+    public async Task BuildHtmlFromMarkdownFileAsync_ShouldIncludeContentHeightScript()
+    {
+        if (tempFilePath == null)
+        {
+            throw new InvalidOperationException("Temporary file path is not initialized.");
+        }
+
+        // Arrange
+        await TestFileHelper.WriteAllTextAsync(tempFilePath, "# Test");
+        var service = new MarkdownDocumentService();
+
+        // Act
+        var html = await service.BuildHtmlFromMarkdownFileAsync(tempFilePath, "<base href=\"/\">");
+
+        // Assert
+        html.Should().Contain("contentHeight");
+    }
+
+    [TestMethod]
     public async Task BuildHtmlFromMarkdownFileAsync_ShouldThrowIfFileMissing()
     {
         // Arrange

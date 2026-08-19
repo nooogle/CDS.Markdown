@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Web.WebView2.Core;
 
 namespace CDS.Markdown;
@@ -25,12 +27,22 @@ public partial class MarkdownViewer : UserControl
     public MarkdownViewerOptions Options { get; } = new();
 
     /// <summary>
+    /// Raised whenever the rendered content's height changes: once after the initial
+    /// render, and again if it changes afterwards (web fonts finishing, Mermaid diagrams
+    /// or MathJax reflowing content, etc.). The value is the content height in CSS pixels.
+    /// Useful for a host that wants to size its own container to the content rather than
+    /// fixing a height up front.
+    /// </summary>
+    public event EventHandler<int>? ContentHeightChanged;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MarkdownViewer"/> class.
     /// </summary>
     public MarkdownViewer()
     {
         InitializeComponent();
         session.HtmlReady += OnHtmlReadyAsync;
+        ApplyToolbarVisibility();
     }
 
     /// <summary>
@@ -42,6 +54,7 @@ public partial class MarkdownViewer : UserControl
     public async Task LoadMarkdownFromStringAsync(string markdown)
     {
         ApplyThemeToWebView();
+        ApplyToolbarVisibility();
         session.Theme = Options.Theme;
         await session.LoadMarkdownFromStringAsync(markdown);
     }
@@ -55,8 +68,22 @@ public partial class MarkdownViewer : UserControl
     public async Task LoadMarkdownAsync(string filePath)
     {
         ApplyThemeToWebView();
+        ApplyToolbarVisibility();
         session.Theme = Options.Theme;
         await session.NavigateToAsync(filePath, setHome: true);
+    }
+
+    /// <summary>
+    /// Reads the current rendered content height on demand.
+    /// Prefer <see cref="ContentHeightChanged"/> for hosts that want to react to height
+    /// changes as they happen; use this when a one-off, up-to-date reading is enough.
+    /// </summary>
+    /// <returns>The content height in CSS pixels, or 0 if nothing has been rendered yet.</returns>
+    public async Task<int> GetContentHeightAsync()
+    {
+        await EnsureWebView2ReadyAsync();
+        var result = await webView.CoreWebView2!.ExecuteScriptAsync("document.body.scrollHeight");
+        return int.TryParse(result, out var height) ? height : 0;
     }
 
     /// <summary>
@@ -88,7 +115,7 @@ public partial class MarkdownViewer : UserControl
                 return;
             }
 
-            // Ensure control handle exists and we’re on the UI thread.
+            // Ensure control handle exists and weï¿½re on the UI thread.
             var _ = Handle;
 
             // Determine user data folder for WebView2 profile.
@@ -141,6 +168,16 @@ public partial class MarkdownViewer : UserControl
     }
 
     /// <summary>
+    /// Shows or hides the Home/Back/Forward navigation toolbar based on <see cref="MarkdownViewerOptions.ShowNavigationToolbar"/>.
+    /// When hidden, the WebView2 control docks to fill the entire control since <c>panel1</c> is
+    /// excluded from Windows Forms' dock layout while invisible.
+    /// </summary>
+    private void ApplyToolbarVisibility()
+    {
+        panel1.Visible = Options.ShowNavigationToolbar;
+    }
+
+    /// <summary>
     /// Attaches event handlers to the WebView2 control, ensuring no duplicates.
     /// </summary>
     private void AttachWebView2EventHandlers()
@@ -153,15 +190,47 @@ public partial class MarkdownViewer : UserControl
     }
 
     /// <summary>
-    /// Handles messages from the WebView2 (e.g., when a .md link is clicked in the HTML).
+    /// Handles messages from the WebView2 (e.g., a .md link clicked in the HTML, or a
+    /// content-height report). Messages are JSON objects with a <c>type</c> discriminator
+    /// so multiple message shapes can share the one WebView2 messaging channel;
+    /// see <see cref="MarkdownViewerResources.LinkInterceptScript"/> and
+    /// <see cref="MarkdownViewerResources.ContentHeightScript"/> for the senders.
     /// </summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The event arguments.</param>
     private void WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
-        var href = e.TryGetWebMessageAsString();
-        _ = session.HandleMarkdownLinkAsync(href);
+        WebViewMessage? message;
+        try
+        {
+            message = JsonSerializer.Deserialize<WebViewMessage>(e.WebMessageAsJson);
+        }
+        catch (JsonException)
+        {
+            return;
+        }
+
+        switch (message?.Type)
+        {
+            case "linkClick":
+                _ = session.HandleMarkdownLinkAsync(message.Href);
+                break;
+
+            case "contentHeight" when message.Height is int height:
+                ContentHeightChanged?.Invoke(this, height);
+                break;
+        }
     }
+
+    /// <summary>
+    /// The shape of messages posted from the rendered HTML over the WebView2 messaging
+    /// channel. <see cref="Href"/> is populated for <c>linkClick</c> messages,
+    /// <see cref="Height"/> for <c>contentHeight</c> messages.
+    /// </summary>
+    private sealed record WebViewMessage(
+        [property: JsonPropertyName("type")] string? Type,
+        [property: JsonPropertyName("href")] string? Href,
+        [property: JsonPropertyName("height")] int? Height);
 
     /// <summary>
     /// Handles navigation events in WebView2 to intercept .md file navigation.

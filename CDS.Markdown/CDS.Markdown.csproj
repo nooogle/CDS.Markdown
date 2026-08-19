@@ -14,8 +14,8 @@
     <!-- NuGet metadata for public release -->
     <PackageId>CDS.Markdown</PackageId>
     <Title>CDS.Markdown</Title>
-    <Description>Easy-to-use .NET WinForms control for rendering Markdown using Markdig and WebView2.</Description>
-    <PackageTags>markdown;winforms;webview2;markdig;viewer;utility</PackageTags>
+    <Description>Easy-to-use .NET WinForms controls for rendering Markdown: a full-fidelity WebView2 viewer, and a lightweight RichTextBox-based control for smaller fragments. Built on Markdig.</Description>
+    <PackageTags>markdown;winforms;webview2;markdig;viewer;richtextbox;utility</PackageTags>
     <RepositoryUrl>https://github.com/nooogle/CDS.Markdown</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

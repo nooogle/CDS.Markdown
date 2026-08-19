@@ -15,6 +15,9 @@ public partial class FormMain : Form
         var menuGroup = menuTree.API.AddGroup("Wiki");
         menuGroup.AddItem("Demo", "", this, () => new FormWikiDemo());
 
+        var textBoxGroup = menuTree.AddGroup("MarkdownTextBox");
+        textBoxGroup.AddItem("Demo", "", this, () => new FormMarkdownTextBoxDemo());
+
         var creationGroup = menuTree.AddGroup("Creation");
         creationGroup.AddItem("Fluent API", "", () => CreationDemos.FormCreationDemoHost.Run(this, CreationDemos.FluentAPI.Run));
         creationGroup.AddItem("Builder API", "", () => CreationDemos.FormCreationDemoHost.Run(this, CreationDemos.BuilderAPI.Run));

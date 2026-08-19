@@ -15,6 +15,12 @@ public class MarkdownHtmlDocumentBuilder
     private readonly string linkInterceptScript;
 
     /// <summary>
+    /// The script that reports rendered content height back to the host, or <c>null</c>
+    /// to omit it (e.g. for callers that only need the HTML, not the WebView2 messaging).
+    /// </summary>
+    private readonly string? contentHeightScript;
+
+    /// <summary>
     /// The minified mermaid.js bundle to inline, or <c>null</c> if diagram
     /// rendering is not required.
     /// </summary>
@@ -61,6 +67,10 @@ public class MarkdownHtmlDocumentBuilder
     /// The initialisation script that configures MathJax.
     /// Required when <paramref name="mathJaxBundle"/> is supplied.
     /// </param>
+    /// <param name="contentHeightScript">
+    /// The script that reports rendered content height back to the host via WebView2
+    /// messaging. Pass <c>null</c> to omit.
+    /// </param>
     public MarkdownHtmlDocumentBuilder(
         string githubCss,
         string defaultCss,
@@ -68,7 +78,8 @@ public class MarkdownHtmlDocumentBuilder
         string? mermaidBundle = null,
         string? mermaidInitScript = null,
         string? mathJaxBundle = null,
-        string? mathJaxInitScript = null)
+        string? mathJaxInitScript = null,
+        string? contentHeightScript = null)
     {
         this.githubCss = githubCss;
         this.defaultCss = defaultCss;
@@ -77,6 +88,7 @@ public class MarkdownHtmlDocumentBuilder
         this.mermaidInitScript = mermaidInitScript;
         this.mathJaxBundle = mathJaxBundle;
         this.mathJaxInitScript = mathJaxInitScript;
+        this.contentHeightScript = contentHeightScript;
     }
 
     /// <summary>
@@ -96,6 +108,10 @@ public class MarkdownHtmlDocumentBuilder
             ? $"  {mathJaxInitScript}\n  <script>{mathJaxBundle}</script>\n"
             : string.Empty;
 
+        var contentHeightScripts = contentHeightScript is not null
+            ? $"  {contentHeightScript}\n"
+            : string.Empty;
+
         var themeAttribute = theme switch
         {
             MarkdownViewerTheme.Light => " data-theme=\"light\"",
@@ -113,6 +129,7 @@ public class MarkdownHtmlDocumentBuilder
                $"    {githubCss}\n" +
                "  </style>\n" +
                $"  {linkInterceptScript}\n" +
+               contentHeightScripts +
                mermaidScripts +
                mathJaxScripts +
                "</head>\n" +
