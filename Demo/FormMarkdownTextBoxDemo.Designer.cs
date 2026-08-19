@@ -1,6 +1,6 @@
-﻿namespace Demo
+namespace Demo
 {
-    partial class FormWikiDemo
+    partial class FormMarkdownTextBoxDemo
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            markdownViewer = new CDS.Markdown.MarkdownViewer();
+            markdownTextBox = new CDS.Markdown.MarkdownTextBox();
             labelInfo = new Label();
+            labelPreferredHeight = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            labelContentHeight = new Label();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // markdownViewer
-            // 
-            markdownViewer.BorderStyle = BorderStyle.FixedSingle;
-            markdownViewer.Dock = DockStyle.Fill;
-            markdownViewer.Location = new Point(3, 44);
-            markdownViewer.Name = "markdownViewer";
-            markdownViewer.Size = new Size(748, 667);
-            markdownViewer.TabIndex = 0;
-            // 
+            //
+            // markdownTextBox
+            //
+            markdownTextBox.BorderStyle = BorderStyle.FixedSingle;
+            markdownTextBox.Dock = DockStyle.Fill;
+            markdownTextBox.Location = new Point(3, 44);
+            markdownTextBox.Name = "markdownTextBox";
+            markdownTextBox.Size = new Size(748, 646);
+            markdownTextBox.TabIndex = 0;
+            //
             // labelInfo
-            // 
+            //
             labelInfo.Dock = DockStyle.Fill;
             labelInfo.Location = new Point(3, 0);
             labelInfo.Name = "labelInfo";
@@ -53,13 +53,23 @@
             labelInfo.TabIndex = 0;
             labelInfo.Text = "label1";
             labelInfo.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            //
+            // labelPreferredHeight
+            //
+            labelPreferredHeight.Dock = DockStyle.Bottom;
+            labelPreferredHeight.Location = new Point(12, 715);
+            labelPreferredHeight.Name = "labelPreferredHeight";
+            labelPreferredHeight.Size = new Size(754, 23);
+            labelPreferredHeight.TabIndex = 1;
+            labelPreferredHeight.Text = "Preferred content height: (pending)";
+            labelPreferredHeight.TextAlign = ContentAlignment.MiddleCenter;
+            //
             // tableLayoutPanel1
-            // 
+            //
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(labelInfo, 0, 0);
-            tableLayoutPanel1.Controls.Add(markdownViewer, 0, 1);
+            tableLayoutPanel1.Controls.Add(markdownTextBox, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(12, 12);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -69,36 +79,26 @@
             tableLayoutPanel1.Size = new Size(754, 714);
             tableLayoutPanel1.TabIndex = 2;
             //
-            // labelContentHeight
-            //
-            labelContentHeight.Dock = DockStyle.Bottom;
-            labelContentHeight.Location = new Point(12, 715);
-            labelContentHeight.Name = "labelContentHeight";
-            labelContentHeight.Size = new Size(754, 23);
-            labelContentHeight.TabIndex = 3;
-            labelContentHeight.Text = "Content height: (pending)";
-            labelContentHeight.TextAlign = ContentAlignment.MiddleCenter;
-            //
-            // Form1
+            // FormMarkdownTextBoxDemo
             //
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(778, 738);
             Controls.Add(tableLayoutPanel1);
-            Controls.Add(labelContentHeight);
-            Name = "Form1";
+            Controls.Add(labelPreferredHeight);
+            Name = "FormMarkdownTextBoxDemo";
             Padding = new Padding(12);
-            Text = "CDS.Markdown demo";
-            Load += Form1_Load;
+            Text = "CDS.Markdown - MarkdownTextBox demo";
+            Load += FormMarkdownTextBoxDemo_Load;
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private CDS.Markdown.MarkdownViewer markdownViewer;
+        private CDS.Markdown.MarkdownTextBox markdownTextBox;
         private Label labelInfo;
+        private Label labelPreferredHeight;
         private TableLayoutPanel tableLayoutPanel1;
-        private Label labelContentHeight;
     }
 }

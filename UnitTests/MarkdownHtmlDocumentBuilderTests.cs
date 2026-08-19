@@ -60,4 +60,31 @@ public class MarkdownHtmlDocumentBuilderTests
         html.Should().Contain(mathJaxBundle)
             .And.Contain(mathJaxInit);
     }
+
+    [TestMethod]
+    public void Build_ShouldIncludeContentHeightScriptWhenProvided()
+    {
+        // Arrange
+        var contentHeightScript = "<script>reportHeight();</script>";
+        var builder = new MarkdownHtmlDocumentBuilder("", "", "", contentHeightScript: contentHeightScript);
+
+        // Act
+        var html = builder.Build("body", "<base href=\"/\">");
+
+        // Assert
+        html.Should().Contain(contentHeightScript);
+    }
+
+    [TestMethod]
+    public void Build_ShouldOmitContentHeightScriptWhenNotProvided()
+    {
+        // Arrange
+        var builder = new MarkdownHtmlDocumentBuilder("", "", "");
+
+        // Act
+        var html = builder.Build("body", "<base href=\"/\">");
+
+        // Assert
+        html.Should().NotContain("reportHeight");
+    }
 }

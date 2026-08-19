@@ -11,6 +11,7 @@
 ## Features
 
 - 🖥️ **WinForms Viewer Control**: A drop-in `MarkdownViewer` control powered by [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) and [Markdig](https://github.com/lunet-io/markdig). Includes Light and Dark mode theme support.
+- ⚡ **Lightweight Text Box Control**: `MarkdownTextBox`, a `RichTextBox`-based control for prose-sized Markdown (headings, formatting, lists, tables) with no WebView2 process and a synchronous preferred-height read — a cheaper option when you're rendering many small fragments (e.g. chat bubbles) rather than a full document.
 - 📝 **Programmatic Creation**: Generate Markdown dynamically using a clean **Fluent API** or a traditional **Builder API**.
 - 🔌 **Offline-First**: Embedded resources for GitHub-style CSS, Mermaid.js diagrams, and MathJax (LaTeX math) mean **no internet connection is required** to render advanced Markdown.
 - 🧪 **Fully Tested**: Comprehensive unit test coverage ensuring reliable HTML generation and Markdown building.
@@ -30,6 +31,12 @@ await markdownViewer1.LoadMarkdownAsync("readme.md");
 ```
 👉 [Read the full Viewer Documentation](docs/viewer.md)
 
+Or, for many small fragments rather than a full document, drop a `MarkdownTextBox` control onto your form instead:
+```csharp
+markdownTextBox1.SetMarkdown("**Hello**, world!");
+```
+See the "Embedding as a Fragment" section of the [Viewer Documentation](docs/viewer.md) for the tradeoff between the two controls.
+
 ### 3. Generating Markdown (Fluent API)
 Create structured Markdown programmatically without string wrangling:
 ```csharp
@@ -44,7 +51,7 @@ var markdown = new FluentMarkdownDocument()
 
 ## Project Structure
 
-- **`CDS.Markdown`**: The core library containing the viewer control, HTML builder, and Markdown generation APIs.
+- **`CDS.Markdown`**: The core library containing the viewer control, the lightweight text box control, HTML builder, and Markdown generation APIs.
 - **`Demo`**: A sample WinForms application demonstrating both the viewer and the creation APIs.
 - **`UnitTests`**: MSTest project covering HTML rendering, session management, and Markdown generation.
 
