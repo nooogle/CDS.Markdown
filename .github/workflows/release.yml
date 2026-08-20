@@ -70,6 +70,14 @@ jobs:
           $mainVersion = Get-PackageVersion 'CDS.Markdown'
           dotnet-CycloneDX CDS.Markdown/CDS.Markdown.csproj -o ./nupkg/sbom-main -F json -sv $mainVersion
 
+          # Both tools write "bom.json" in their own subfolder (needed so the two Attest SBOM
+          # steps below each get an unambiguous path). GitHub Release assets are flat with no
+          # folder structure though, so uploading both files as-is would collide on the same
+          # "bom.json" name and silently keep only one - copy each to a package-qualified name at
+          # the top level for the Create GitHub Release step to reference instead.
+          Copy-Item ./nupkg/sbom-lite/bom.json ./nupkg/CDS.Markdown.Lite.bom.json
+          Copy-Item ./nupkg/sbom-main/bom.json ./nupkg/CDS.Markdown.bom.json
+
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v4
         with:
@@ -112,8 +120,8 @@ jobs:
         with:
           files: |
             ./nupkg/*.nupkg
-            ./nupkg/sbom-lite/bom.json
-            ./nupkg/sbom-main/bom.json
+            ./nupkg/CDS.Markdown.Lite.bom.json
+            ./nupkg/CDS.Markdown.bom.json
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
