@@ -85,7 +85,7 @@ public class MarkdownViewerUiTests
 /// <summary>
 /// Drives the real <c>Demo.exe</c> to confirm <see cref="CDS.Markdown.MarkdownTextBox"/> renders
 /// content and reports a real preferred height in a real, painted window - the lightweight
-/// alternative to <see cref="CDS.Markdown.MarkdownViewer"/> added per todo.md item 4.
+/// alternative to <see cref="CDS.Markdown.MarkdownViewer"/>.
 /// </summary>
 [TestClass]
 public class MarkdownTextBoxUiTests

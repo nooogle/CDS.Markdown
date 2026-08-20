@@ -78,21 +78,25 @@ jobs:
           Copy-Item ./nupkg/sbom-lite/bom.json ./nupkg/CDS.Markdown.Lite.bom.json
           Copy-Item ./nupkg/sbom-main/bom.json ./nupkg/CDS.Markdown.bom.json
 
+      # actions/attest-build-provenance and actions/attest-sbom are both now thin wrappers over
+      # actions/attest (which auto-detects provenance vs. SBOM mode from whether sbom-path is
+      # set) - attest-sbom specifically logs a runtime deprecation warning, so all three steps
+      # below use the unified action directly instead.
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest@v4
         with:
           subject-path: |
             ./nupkg/*.nupkg
             !./nupkg/*.symbols.nupkg
 
       - name: Attest SBOM (CDS.Markdown.Lite)
-        uses: actions/attest-sbom@v4
+        uses: actions/attest@v4
         with:
           subject-path: ./nupkg/CDS.Markdown.Lite.*.nupkg
           sbom-path: ./nupkg/sbom-lite/bom.json
 
       - name: Attest SBOM (CDS.Markdown)
-        uses: actions/attest-sbom@v4
+        uses: actions/attest@v4
         with:
           # Matches CDS.Markdown's own package only - a digit follows the id, unlike
           # CDS.Markdown.Lite's package name.
