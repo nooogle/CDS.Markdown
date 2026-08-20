@@ -102,7 +102,7 @@ Two practical conclusions follow from that:
 - **"One instance per chat message, created and disposed as the transcript scrolls" is a supported
   scenario.** Each cycle costs a few hundred milliseconds and disposal promptly tears down that
   instance's renderer process — nothing here rules it out, and it's the shape
-  `CDS.ScriptChat.WinForms` originally asked about (see `todo.md`).
+  `CDS.ScriptChat.WinForms` originally asked about.
 - **Keeping dozens of instances alive and rendered at once is the expensive case**, at roughly
   100+ MB of WebView2 process memory per concurrently-visible instance, on top of a few hundred KB
   of managed overhead each in the host process. A `FlowLayoutPanel` full of message bubbles that

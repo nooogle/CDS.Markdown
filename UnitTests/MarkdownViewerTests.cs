@@ -35,9 +35,9 @@ public class MarkdownViewerTests
     }
 
     /// <summary>
-    /// The toolbar panel is a designer-generated private field with no public accessor
-    /// (see todo.md item 1), so tests reach it via reflection rather than exposing new
-    /// public surface purely for testability.
+    /// The toolbar panel is a designer-generated private field with no public accessor,
+    /// so tests reach it via reflection rather than exposing new public surface purely
+    /// for testability.
     /// </summary>
     private static Panel GetToolbarPanel(MarkdownViewer viewer)
     {
