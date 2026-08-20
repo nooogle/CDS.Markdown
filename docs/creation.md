@@ -2,6 +2,8 @@
 
 `CDS.Markdown` provides two programmatic ways to generate Markdown strings: a **Fluent API** and a **Builder API**. Both approaches eliminate manual string concatenation and formatting bugs.
 
+Both APIs live in the [`CDS.Markdown.Lite`](https://www.nuget.org/packages/CDS.Markdown.Lite/) package (`Markdig` is the only dependency) — installing `CDS.Markdown` still gets you both, since it depends on `CDS.Markdown.Lite`, but if all you need is Markdown generation you can install `CDS.Markdown.Lite` on its own.
+
 ## Fluent API
 
 The `FluentMarkdownDocument` allows you to chain method calls to build a document. This is ideal for generating static or linear documents.

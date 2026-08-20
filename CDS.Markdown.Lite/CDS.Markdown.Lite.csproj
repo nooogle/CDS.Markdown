@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0-windows;net10.0-windows</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>package.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- NuGet metadata for public release -->
+    <PackageId>CDS.Markdown.Lite</PackageId>
+    <Title>CDS.Markdown.Lite</Title>
+    <Description>Lightweight, low-dependency .NET WinForms Markdown rendering and generation: MarkdownTextBox (a RichTextBox-based renderer, no browser process) plus the Fluent/Builder APIs for generating Markdown. Depends on Markdig only - no WebView2. For a full-fidelity WebView2-based document viewer, see CDS.Markdown.</Description>
+    <PackageTags>markdown;winforms;markdig;richtextbox;utility;lightweight</PackageTags>
+    <RepositoryUrl>https://github.com/nooogle/CDS.Markdown</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nooogle/CDS.Markdown</PackageProjectUrl>
+    <PackageReleaseNotes>Initial public release.</PackageReleaseNotes>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="package.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="1.3.2" />
+  </ItemGroup>
+
+</Project>

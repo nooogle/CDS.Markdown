@@ -127,6 +127,12 @@ Two practical conclusions follow from that:
 
 ## MarkdownTextBox: a Lighter Alternative
 
+`MarkdownTextBox` lives in the [`CDS.Markdown.Lite`](https://www.nuget.org/packages/CDS.Markdown.Lite/)
+package, not `CDS.Markdown` — it depends on `Markdig` only. If `CDS.Markdown` (the WebView2 viewer)
+is already installed you already have it transitively, but if all you need is
+`MarkdownTextBox`, install `CDS.Markdown.Lite` directly instead so WebView2 never enters your
+project's dependency tree.
+
 `MarkdownTextBox` is a `RichTextBox` subclass driven by Markdig — no WebView2, no browser process,
 no navigation chrome. Call `SetMarkdown(string?)` to render, and `GetPreferredContentHeight()` for
 a synchronous height reading (no async round-trip to a browser process is needed, unlike
@@ -146,6 +152,7 @@ not a document viewer. See the `Demo` project's "MarkdownTextBox" menu entry (or
 
 | | `MarkdownViewer` | `MarkdownTextBox` |
 |---|---|---|
+| Package | `CDS.Markdown` | `CDS.Markdown.Lite` |
 | Rendering | Real browser (WebView2) | `RichTextBox` |
 | Per-instance cost | A WebView2 renderer process each (see above) | Whatever any other `RichTextBox` costs |
 | Mermaid / MathJax / real tables / images / links | ✅ | ❌ |
