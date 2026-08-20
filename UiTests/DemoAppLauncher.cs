@@ -56,9 +56,15 @@ internal sealed class DemoAppLauncher : IDisposable
     /// <summary>
     /// Gets the application's main window, waiting up to <paramref name="timeout"/> for it to appear.
     /// </summary>
+    /// <remarks>
+    /// Default timeout is generous (well beyond the ~1s worst case measured on a warm dev
+    /// machine) because a fresh CI runner pays WebView2's first-ever environment/profile creation
+    /// cost cold, which observed CI failures showed can exceed 15s - a shorter timeout trades a
+    /// few seconds of extra wait in the success case for materially less CI flakiness.
+    /// </remarks>
     public Window GetMainWindow(TimeSpan? timeout = null)
     {
-        var window = application.GetMainWindow(automation, timeout ?? TimeSpan.FromSeconds(15));
+        var window = application.GetMainWindow(automation, timeout ?? TimeSpan.FromSeconds(45));
         if (window is null)
         {
             throw new TimeoutException("Demo.exe's main window did not appear within the timeout.");

@@ -56,9 +56,10 @@ public class MarkdownViewerUiTests
 
         // Act: labelContentHeight's text is updated from MarkdownViewer.ContentHeightChanged
         // (see FormWikiDemo), which only fires once the WebView2 has actually rendered content.
+        // Timeout matches DemoAppLauncher.GetMainWindow's - see its remarks on CI cold-start cost.
         Retry.WhileTrue(
             () => GetContentHeightLabelText(window).Contains("(pending)"),
-            timeout: TimeSpan.FromSeconds(15),
+            timeout: TimeSpan.FromSeconds(45),
             interval: TimeSpan.FromMilliseconds(250));
         var labelText = GetContentHeightLabelText(window);
 
