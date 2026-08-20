@@ -18,9 +18,9 @@ namespace CDS.Markdown;
 /// <remarks>
 /// This is a prose-formatting control, not a document viewer: Mermaid diagrams, MathJax, real HTML
 /// tables, images (beyond an italic placeholder), and clickable links are deliberately out of
-/// scope. Reach for <see cref="MarkdownViewer"/> instead when you need those, or when the content
-/// isn't reliably small — see docs/viewer.md's "Embedding as a Fragment" section for the tradeoff
-/// between the two.
+/// scope. Reach for <c>MarkdownViewer</c> (in the CDS.Markdown package) instead when you need
+/// those, or when the content isn't reliably small — see docs/viewer.md's "Embedding as a
+/// Fragment" section for the tradeoff between the two.
 /// </remarks>
 public class MarkdownTextBox : RichTextBox
 {

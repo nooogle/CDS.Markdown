@@ -14,8 +14,8 @@
     <!-- NuGet metadata for public release -->
     <PackageId>CDS.Markdown</PackageId>
     <Title>CDS.Markdown</Title>
-    <Description>Easy-to-use .NET WinForms controls for rendering Markdown: a full-fidelity WebView2 viewer, and a lightweight RichTextBox-based control for smaller fragments. Built on Markdig.</Description>
-    <PackageTags>markdown;winforms;webview2;markdig;viewer;richtextbox;utility</PackageTags>
+    <Description>Easy-to-use .NET WinForms control for rendering full Markdown documents using WebView2 (MarkdownViewer). Also pulls in CDS.Markdown.Lite, so you still get MarkdownTextBox and the Markdown generation APIs. If you only need those, install CDS.Markdown.Lite instead to avoid the WebView2 dependency.</Description>
+    <PackageTags>markdown;winforms;webview2;markdig;viewer;utility</PackageTags>
     <RepositoryUrl>https://github.com/nooogle/CDS.Markdown</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -70,6 +70,17 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
     <PackageReference Include="Markdig" Version="1.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      MarkdownTextBox and the Fluent/Builder generation APIs live in CDS.Markdown.Lite, which
+      depends on Markdig only (no WebView2) - keeping them there means a consumer who only wants
+      the lightweight control doesn't pull WebView2 into their project. This package (the
+      WebView2-based MarkdownViewer) references that lean package rather than duplicating its
+      types, so existing CDS.Markdown consumers still get everything transitively, unchanged.
+    -->
+    <ProjectReference Include="..\CDS.Markdown.Lite\CDS.Markdown.Lite.csproj" />
   </ItemGroup>
 
   <ItemGroup>

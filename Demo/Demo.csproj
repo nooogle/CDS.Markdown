@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CDS.Markdown\CDS.Markdown.csproj" />
+    <ProjectReference Include="..\CDS.Markdown.Lite\CDS.Markdown.Lite.csproj" />
   </ItemGroup>
 
   <ItemGroup>

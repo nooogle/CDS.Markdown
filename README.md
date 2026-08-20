@@ -8,19 +8,31 @@
 
 **CDS.Markdown** is a comprehensive .NET library for both **rendering** and **generating** Markdown. It is designed for easy integration into your .NET 8 and .NET 10 applications.
 
+## Two packages
+
+| | [`CDS.Markdown.Lite`](https://www.nuget.org/packages/CDS.Markdown.Lite/) | [`CDS.Markdown`](https://www.nuget.org/packages/CDS.Markdown/) |
+|---|---|---|
+| Gives you | `MarkdownTextBox` + the Fluent/Builder generation APIs | Everything in `CDS.Markdown.Lite`, plus `MarkdownViewer` |
+| Depends on | `Markdig` only | `Markdig`, `Microsoft.Web.WebView2`, and `CDS.Markdown.Lite` |
+| Pick this when | You only need prose-sized rendering or Markdown generation, and want to keep WebView2 out of your dependency tree entirely | You need `MarkdownViewer`'s full document fidelity (Mermaid, MathJax, real tables, images, links) |
+
+`CDS.Markdown` depends on `CDS.Markdown.Lite`, so installing `CDS.Markdown` still gets you `MarkdownTextBox` and the generation APIs too — nothing is lost by installing the bigger package. Install `CDS.Markdown.Lite` on its own only when you specifically want to avoid the WebView2 dependency.
+
 ## Features
 
-- 🖥️ **WinForms Viewer Control**: A drop-in `MarkdownViewer` control powered by [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) and [Markdig](https://github.com/lunet-io/markdig). Includes Light and Dark mode theme support.
-- ⚡ **Lightweight Text Box Control**: `MarkdownTextBox`, a `RichTextBox`-based control for prose-sized Markdown (headings, formatting, lists, tables) with no WebView2 process and a synchronous preferred-height read — a cheaper option when you're rendering many small fragments (e.g. chat bubbles) rather than a full document.
-- 📝 **Programmatic Creation**: Generate Markdown dynamically using a clean **Fluent API** or a traditional **Builder API**.
+- 🖥️ **WinForms Viewer Control** (`CDS.Markdown`): A drop-in `MarkdownViewer` control powered by [WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) and [Markdig](https://github.com/lunet-io/markdig). Includes Light and Dark mode theme support.
+- ⚡ **Lightweight Text Box Control** (`CDS.Markdown.Lite`): `MarkdownTextBox`, a `RichTextBox`-based control for prose-sized Markdown (headings, formatting, lists, tables) with no WebView2 process and a synchronous preferred-height read — a cheaper option when you're rendering many small fragments (e.g. chat bubbles) rather than a full document.
+- 📝 **Programmatic Creation** (`CDS.Markdown.Lite`): Generate Markdown dynamically using a clean **Fluent API** or a traditional **Builder API**.
 - 🔌 **Offline-First**: Embedded resources for GitHub-style CSS, Mermaid.js diagrams, and MathJax (LaTeX math) mean **no internet connection is required** to render advanced Markdown.
 - 🧪 **Fully Tested**: Comprehensive unit test coverage ensuring reliable HTML generation and Markdown building.
 
 ## Quick Start
 
 ### 1. Installation
-Install the package via NuGet:
+Install whichever package matches what you need (see the table above):
 ```bash
+dotnet add package CDS.Markdown.Lite
+# or, for the full WebView2 viewer too:
 dotnet add package CDS.Markdown
 ```
 
@@ -31,7 +43,7 @@ await markdownViewer1.LoadMarkdownAsync("readme.md");
 ```
 👉 [Read the full Viewer Documentation](docs/viewer.md)
 
-Or, for many small fragments rather than a full document, drop a `MarkdownTextBox` control onto your form instead:
+Or, for many small fragments rather than a full document, drop a `MarkdownTextBox` control onto your form instead — this one only needs `CDS.Markdown.Lite`:
 ```csharp
 markdownTextBox1.SetMarkdown("**Hello**, world!");
 ```
@@ -51,9 +63,11 @@ var markdown = new FluentMarkdownDocument()
 
 ## Project Structure
 
-- **`CDS.Markdown`**: The core library containing the viewer control, the lightweight text box control, HTML builder, and Markdown generation APIs.
-- **`Demo`**: A sample WinForms application demonstrating both the viewer and the creation APIs.
-- **`UnitTests`**: MSTest project covering HTML rendering, session management, and Markdown generation.
+- **`CDS.Markdown.Lite`**: The lightweight library — `MarkdownTextBox` and the Markdown generation APIs. Depends on Markdig only.
+- **`CDS.Markdown`**: The WebView2-based viewer control and its HTML-building pipeline. Depends on `CDS.Markdown.Lite`.
+- **`Demo`**: A sample WinForms application demonstrating the viewer, the text box, and the creation APIs.
+- **`UnitTests`**: MSTest project covering both packages — HTML rendering, session management, `MarkdownTextBox` rendering, and Markdown generation.
+- **`UiTests`**: FlaUI project that drives the real `Demo.exe` end-to-end.
 
 ## Documentation
 

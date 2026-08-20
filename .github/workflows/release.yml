@@ -44,18 +44,31 @@ jobs:
         run: dotnet test --configuration Release --no-build
 
       - name: Pack
-        run: dotnet pack CDS.Markdown/CDS.Markdown.csproj --configuration Release --no-build --output ./nupkg
+        run: |
+          dotnet pack CDS.Markdown.Lite/CDS.Markdown.Lite.csproj --configuration Release --no-build --output ./nupkg
+          dotnet pack CDS.Markdown/CDS.Markdown.csproj --configuration Release --no-build --output ./nupkg
 
       - name: Generate SBOM
+        shell: pwsh
         run: |
           dotnet tool install --global CycloneDX
-          # IncludeSymbols=true with no SymbolPackageFormat produces a legacy
-          # *.symbols.nupkg alongside the real package — that also matches a
-          # *.nupkg wildcard, so exclude it explicitly rather than assuming
-          # exactly one file matches.
-          $pkg = Get-ChildItem -Path ./nupkg -Filter "CDS.Markdown.*.nupkg" | Where-Object { $_.Name -notlike "*.symbols.nupkg" }
-          $version = $pkg.BaseName.Substring("CDS.Markdown".Length + 1)
-          dotnet-CycloneDX CDS.Markdown/CDS.Markdown.csproj -o ./nupkg -F json -sv $version
+
+          # IncludeSymbols=true with no SymbolPackageFormat produces a legacy *.symbols.nupkg
+          # alongside each real package. Two packages now share the ./nupkg output directory, so
+          # match each package's exact id followed by the start of its version (a digit) - a bare
+          # "CDS.Markdown.*.nupkg" wildcard would also match CDS.Markdown.Lite's package.
+          function Get-PackageVersion([string]$id) {
+            $pattern = "^$([regex]::Escape($id))\.\d"
+            $pkg = Get-ChildItem -Path ./nupkg -Filter '*.nupkg' |
+              Where-Object { $_.Name -notlike '*.symbols.nupkg' -and $_.BaseName -match $pattern }
+            return $pkg.BaseName.Substring($id.Length + 1)
+          }
+
+          $liteVersion = Get-PackageVersion 'CDS.Markdown.Lite'
+          dotnet-CycloneDX CDS.Markdown.Lite/CDS.Markdown.Lite.csproj -o ./nupkg/sbom-lite -F json -sv $liteVersion
+
+          $mainVersion = Get-PackageVersion 'CDS.Markdown'
+          dotnet-CycloneDX CDS.Markdown/CDS.Markdown.csproj -o ./nupkg/sbom-main -F json -sv $mainVersion
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v4
@@ -64,13 +77,19 @@ jobs:
             ./nupkg/*.nupkg
             !./nupkg/*.symbols.nupkg
 
-      - name: Attest SBOM
+      - name: Attest SBOM (CDS.Markdown.Lite)
         uses: actions/attest-sbom@v4
         with:
-          subject-path: |
-            ./nupkg/*.nupkg
-            !./nupkg/*.symbols.nupkg
-          sbom-path: ./nupkg/bom.json
+          subject-path: ./nupkg/CDS.Markdown.Lite.*.nupkg
+          sbom-path: ./nupkg/sbom-lite/bom.json
+
+      - name: Attest SBOM (CDS.Markdown)
+        uses: actions/attest-sbom@v4
+        with:
+          # Matches CDS.Markdown's own package only - a digit follows the id, unlike
+          # CDS.Markdown.Lite's package name.
+          subject-path: ./nupkg/CDS.Markdown.[0-9]*.nupkg
+          sbom-path: ./nupkg/sbom-main/bom.json
 
       - name: Authenticate with NuGet (Trusted Publishing)
         uses: NuGet/login@v1
@@ -93,7 +112,8 @@ jobs:
         with:
           files: |
             ./nupkg/*.nupkg
-            ./nupkg/bom.json
+            ./nupkg/sbom-lite/bom.json
+            ./nupkg/sbom-main/bom.json
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
