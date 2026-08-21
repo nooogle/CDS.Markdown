@@ -55,7 +55,67 @@ public class MarkdownTextBox : RichTextBox
     public void SetMarkdown(string? markdown)
     {
         Clear();
+        RenderMarkdown(markdown, separateFromExistingContent: false);
 
+        SelectionStart = 0;
+        SelectionLength = 0;
+    }
+
+    /// <summary>
+    /// Renders <paramref name="markdown"/> and adds it after the control's existing content,
+    /// separated from it by a blank line — for a host building up a transcript or log rather
+    /// than showing one document at a time. Leaves existing content, including anything added
+    /// via <see cref="AppendPlainText"/>, untouched.
+    /// </summary>
+    /// <param name="markdown">
+    /// The Markdown source to render and append. Does nothing for <see langword="null"/> or
+    /// blank input — unlike <see cref="SetMarkdown"/>, appending nothing must not clear
+    /// existing content.
+    /// </param>
+    public void AppendMarkdown(string? markdown)
+    {
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return;
+        }
+
+        RenderMarkdown(markdown, separateFromExistingContent: true);
+
+        SelectionStart = TextLength;
+        SelectionLength = 0;
+        ScrollToCaret();
+    }
+
+    /// <summary>
+    /// Appends one line of plain, unparsed text after the control's existing content, in a
+    /// monospaced font with an optional background colour — for a host that wants to interleave
+    /// pre-formatted content (e.g. a diff) with rendered Markdown, without it being parsed as
+    /// Markdown itself.
+    /// </summary>
+    /// <param name="text">The line's text. A trailing newline is added; do not include one.</param>
+    /// <param name="backColor">
+    /// The line's background colour, or <see langword="null"/> to use the control's own
+    /// <see cref="Control.BackColor"/>.
+    /// </param>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
+    public void AppendPlainText(string text, Color? backColor = null)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        var style = DefaultStyle() with { FontFamily = MonospaceFontFamily, BackColor = backColor ?? BackColor };
+        AppendLiteral(text + "\n", style);
+
+        SelectionStart = TextLength;
+        SelectionLength = 0;
+        ScrollToCaret();
+    }
+
+    /// <summary>
+    /// Parses and renders <paramref name="markdown"/> onto the control's existing content,
+    /// optionally preceding it with a blank line when that content is non-empty.
+    /// </summary>
+    private void RenderMarkdown(string? markdown, bool separateFromExistingContent)
+    {
         if (string.IsNullOrWhiteSpace(markdown))
         {
             return;
@@ -69,15 +129,17 @@ public class MarkdownTextBox : RichTextBox
         _styles.Push(DefaultStyle());
         try
         {
+            if (separateFromExistingContent && TextLength > 0)
+            {
+                AppendLiteral("\n\n", CurrentStyle);
+            }
+
             RenderBlockSequence(document, blankLineBetween: true);
         }
         finally
         {
             _styles.Clear();
         }
-
-        SelectionStart = 0;
-        SelectionLength = 0;
     }
 
     /// <summary>

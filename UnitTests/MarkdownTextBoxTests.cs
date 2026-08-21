@@ -1,3 +1,5 @@
+using System.Drawing;
+
 using CDS.Markdown;
 using FluentAssertions;
 
@@ -152,6 +154,110 @@ public class MarkdownTextBoxTests
 
         // Assert
         textBox.Text.Should().Contain("Second").And.NotContain("First");
+    }
+
+    [TestMethod]
+    public void AppendMarkdown_ToEmptyControl_RendersContent()
+    {
+        // Arrange
+        using var textBox = new MarkdownTextBox();
+
+        // Act
+        textBox.AppendMarkdown("# First");
+
+        // Assert
+        textBox.Text.Should().Contain("First");
+    }
+
+    [TestMethod]
+    public void AppendMarkdown_AfterExistingContent_KeepsBothAndAddsSeparation()
+    {
+        // Arrange
+        using var textBox = new MarkdownTextBox();
+        textBox.SetMarkdown("First turn.");
+
+        // Act
+        textBox.AppendMarkdown("Second turn.");
+
+        // Assert
+        textBox.Text.Should().Contain("First turn.").And.Contain("Second turn.");
+        textBox.Text.IndexOf("First turn.", StringComparison.Ordinal)
+            .Should().BeLessThan(textBox.Text.IndexOf("Second turn.", StringComparison.Ordinal));
+        textBox.Text.Should().Contain("First turn.\n\nSecond turn.");
+    }
+
+    [TestMethod]
+    public void AppendMarkdown_NullOrWhitespace_LeavesExistingContentUnchanged()
+    {
+        // Arrange
+        using var textBox = new MarkdownTextBox();
+        textBox.SetMarkdown("First turn.");
+
+        // Act
+        textBox.AppendMarkdown(null);
+
+        // Assert
+        textBox.Text.Should().Be("First turn.");
+    }
+
+    [TestMethod]
+    public void AppendMarkdown_AfterSetMarkdown_DoesNotReplacePreviousContent()
+    {
+        // Arrange: this is what SetMarkdown replacing content is explicitly for, so
+        // AppendMarkdown must not fall back to that behaviour.
+        using var textBox = new MarkdownTextBox();
+        textBox.SetMarkdown("# First");
+
+        // Act
+        textBox.AppendMarkdown("# Second");
+
+        // Assert
+        textBox.Text.Should().Contain("First").And.Contain("Second");
+    }
+
+    [TestMethod]
+    public void AppendPlainText_IsNotParsedAsMarkdown()
+    {
+        // Arrange
+        using var textBox = new MarkdownTextBox();
+
+        // Act
+        textBox.AppendPlainText("**not bold**");
+
+        // Assert
+        textBox.Text.Should().Contain("**not bold**");
+    }
+
+    [TestMethod]
+    public void AppendPlainText_AfterMarkdown_AppendsRatherThanReplaces()
+    {
+        // Arrange
+        using var textBox = new MarkdownTextBox();
+        textBox.SetMarkdown("# Diff for review");
+
+        // Act
+        textBox.AppendPlainText("+ added line");
+        textBox.AppendPlainText("- removed line");
+
+        // Assert
+        textBox.Text.Should().Contain("Diff for review")
+            .And.Contain("+ added line")
+            .And.Contain("- removed line");
+    }
+
+    [TestMethod]
+    public void AppendPlainText_SetsRequestedBackColor()
+    {
+        // Arrange
+        using var textBox = new MarkdownTextBox();
+        textBox.AppendPlainText("added line", Color.LightGreen);
+
+        // Act
+        textBox.SelectionStart = textBox.Text.IndexOf("added line", StringComparison.Ordinal);
+        textBox.SelectionLength = 1;
+
+        // Assert
+        textBox.SelectionBackColor.Should().Be(Color.LightGreen);
     }
 
     [TestMethod]
