@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="CDS.WinFormsMenus" Version="1.1.5" />
+    <PackageReference Include="CDS.WinFormsMenus" Version="1.1.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -104,3 +104,4 @@
   </PropertyGroup>
 
 </Project>
+
