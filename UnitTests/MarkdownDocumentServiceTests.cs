@@ -1,5 +1,5 @@
 using CDS.Markdown;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace UnitTests;
 
