@@ -1,6 +1,6 @@
 using System;
 using CDS.Markdown;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests;
