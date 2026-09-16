@@ -18,16 +18,16 @@ jobs:
       id-token: write          # to publish results and get a badge
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: ossf/scorecard-action@v2.4.4   # no floating v2 tag upstream — pin exact, verify with git ls-remote before bumping
+      - uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4 (no floating v2 tag upstream -- verify with git ls-remote before bumping)
         with:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
 
-      - uses: github/codeql-action/upload-sarif@v4
+      - uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
         with:
           sarif_file: results.sarif
