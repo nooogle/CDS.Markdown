@@ -21,7 +21,7 @@ updates:
       # Security updates are grouped regardless of semver so fixes land fast.
       # Safe despite including majors: fetch-metadata reports the *highest*
       # semver change in a PR, so a group containing one reports semver-major
-      # and dependabot-automerge.yml labels it needs-review rather than merging.
+      # and dependabot-automerge.yml leaves the PR open rather than merging it.
       nuget-security:
         applies-to: security-updates
         patterns: [ "*" ]
