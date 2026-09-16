@@ -5,6 +5,8 @@ on: pull_request
 permissions:
   contents: write
   pull-requests: write
+  # PR labels are issue labels, so the label step needs the issues scope too.
+  issues: write
 
 jobs:
   automerge:
@@ -25,9 +27,13 @@ jobs:
         if: >-
           steps.metadata.outputs.update-type == 'version-update:semver-major' ||
           contains(steps.metadata.outputs.dependency-names, 'CDS.')
-        run: gh pr edit "$PR_URL" --add-label needs-review
+        # gh api rather than 'gh pr edit --add-label': gh pr edit also queries
+        # projectCards, which 403s unless repository-projects: read is granted as
+        # well (cli/cli#6274). This touches the labels endpoint and nothing else.
+        run: gh api --method POST "repos/$REPO/issues/$PR_NUMBER/labels" -f "labels[]=needs-review"
         env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge for third-party minor and patch
