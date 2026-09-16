@@ -10,18 +10,32 @@ updates:
       prefix: "chore"
       include: "scope"
     labels: [ "dependencies", "nuget" ]
-    reviewers: [ "nooogle" ]
     assignees: [ "nooogle" ]
+    groups:
+      # Version updates only: majors are left out of this group so they arrive
+      # as individual PRs. dependabot-automerge.yml auto-merges minor/patch.
+      nuget-minor-patch:
+        patterns: [ "*" ]
+        update-types: [ "minor", "patch" ]
+
+      # Security updates are grouped regardless of semver so fixes land fast.
+      # Safe despite including majors: fetch-metadata reports the *highest*
+      # semver change in a PR, so a group containing one reports semver-major
+      # and dependabot-automerge.yml labels it needs-review rather than merging.
+      nuget-security:
+        applies-to: security-updates
+        patterns: [ "*" ]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     open-pull-requests-limit: 5
     commit-message:
       prefix: "ci"
       include: "scope"
     labels: [ "dependencies", "github_actions" ]
-    reviewers: [ "nooogle" ]
     assignees: [ "nooogle" ]
+    groups:
+      github-actions:
+        patterns: [ "*" ]

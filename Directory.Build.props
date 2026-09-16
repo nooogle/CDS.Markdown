@@ -1,4 +1,12 @@
 <Project>
+
+  <!-- NuGet audit: high/critical advisories break the build in CI only, so a
+       new advisory published mid-session never blocks local work. -->
+  <PropertyGroup>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <WarningsAsErrors Condition="'$(CI)' == 'true'">$(WarningsAsErrors);NU1903;NU1904</WarningsAsErrors>
+  </PropertyGroup>
   <PropertyGroup>
     <Company>Carpe Diem Systems</Company>
     <Copyright>Carpe Diem Systems (c) 2025</Copyright>
