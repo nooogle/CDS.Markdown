@@ -11,6 +11,15 @@ updates:
       include: "scope"
     labels: [ "dependencies", "nuget" ]
     assignees: [ "nooogle" ]
+    # These packages ship in step with the .NET runtime; a new major targets
+    # the next .NET release. Stay on the 10.x line while the repos target net10.
+    ignore:
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "System.*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "Microsoft.Bcl.*"
+        update-types: [ "version-update:semver-major" ]
     groups:
       # Version updates only: majors are left out of this group so they arrive
       # as individual PRs. dependabot-automerge.yml auto-merges minor/patch.
